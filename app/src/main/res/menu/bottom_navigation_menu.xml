@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/navigation_home"
+        android:icon="@drawable/home_icon"
+        android:title="Home" />
+    <item
+        android:id="@+id/navigation_generate_outfit"
+        android:icon="@drawable/clothes_icon"
+        android:title="Generate Outfit" />
+    <item
+        android:id="@+id/navigation_wardrobe"
+        android:icon="@drawable/closet_icon"
+        android:title="Wardrobe" />
+</menu>
