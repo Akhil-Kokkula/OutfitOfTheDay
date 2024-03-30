@@ -1,0 +1,64 @@
+package com.example.outfitoftheday
+
+import android.os.Bundle
+import android.util.Log
+import androidx.fragment.app.Fragment
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.EditText
+import android.widget.Toast
+import com.example.outfitoftheday.databinding.FragmentLoginBinding
+import com.example.outfitoftheday.databinding.FragmentSignUpBinding
+import com.google.android.material.button.MaterialButton
+import com.google.firebase.auth.FirebaseAuth
+
+class LoginFragment : Fragment() {
+    private var _binding: FragmentLoginBinding? = null
+    private val binding
+        get() = checkNotNull(_binding) {
+            "Cannot access binding because it is null. Is the view visible?"
+        }
+    private lateinit var logInBtn : MaterialButton
+    private lateinit var emailInputField : EditText
+    private lateinit var passwordInputField : EditText
+    private lateinit var auth : FirebaseAuth
+    private val TAG = "SignUpFragment"
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        _binding = FragmentLoginBinding.inflate(inflater, container, false)
+
+        logInBtn = binding.btnLogIn
+        emailInputField = binding.tilEmail.editText!!
+        passwordInputField = binding.tilPassword.editText!!
+        auth = FirebaseAuth.getInstance()
+
+        logInBtn.setOnClickListener {
+            logIn()
+        }
+
+
+
+        return binding.root
+    }
+
+    private fun logIn() {
+        val email = emailInputField.text.toString().trim()
+        val password = passwordInputField.text.toString().trim()
+
+        auth.signInWithEmailAndPassword(email, password)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Log.d(TAG, "successfully logged in user")
+                } else {
+                    Toast.makeText(getContext(), "Could not login. Please try again.", Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, "could not log in user", task.exception)
+                }
+            }
+    }
+
+
+}
