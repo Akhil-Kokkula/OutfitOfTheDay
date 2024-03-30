@@ -9,7 +9,7 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.Toast
 import com.example.outfitoftheday.databinding.FragmentLoginBinding
-import com.example.outfitoftheday.databinding.FragmentSignUpBinding
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.button.MaterialButton
 import com.google.firebase.auth.FirebaseAuth
 
@@ -53,11 +53,21 @@ class LoginFragment : Fragment() {
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     Log.d(TAG, "successfully logged in user")
+                    goToHomeFragment()
                 } else {
                     Toast.makeText(getContext(), "Could not login. Please try again.", Toast.LENGTH_SHORT).show();
                     Log.e(TAG, "could not log in user", task.exception)
                 }
             }
+    }
+
+    private fun goToHomeFragment() {
+        val activityRootView = requireActivity().findViewById<View>(android.R.id.content)
+
+        val bottomNavigationView = activityRootView.findViewById<BottomNavigationView>(R.id.bottom_navigation)
+        bottomNavigationView.visibility = View.VISIBLE
+
+        requireActivity().supportFragmentManager.beginTransaction().replace(R.id.nav_host_fragment, HomeFragment()).commit()
     }
 
 

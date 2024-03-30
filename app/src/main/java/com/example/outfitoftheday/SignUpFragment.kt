@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
 import com.example.outfitoftheday.databinding.FragmentSignUpBinding
 import com.google.android.material.button.MaterialButton
 import com.google.firebase.auth.FirebaseAuth
@@ -80,9 +79,10 @@ class SignUpFragment : Fragment() {
     }
 
     private fun goToLoginFragment() {
-        findNavController().navigate(
-            R.id.action_signUpFragment_to_loginFragment
-        )
+       requireActivity().supportFragmentManager.beginTransaction()
+           .replace(R.id.nav_host_fragment, LoginFragment())
+           .addToBackStack(null)
+           .commit()
     }
 
 
