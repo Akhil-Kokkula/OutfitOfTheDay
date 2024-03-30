@@ -19,6 +19,7 @@ class MainActivity : AppCompatActivity() {
                 R.id.navigation_home -> selectedFragment = HomeFragment()
                 R.id.navigation_generate_outfit -> selectedFragment = GenerateOutfitFragment()
                 R.id.navigation_wardrobe -> selectedFragment = WardrobeFragment()
+                R.id.navigation_add_outfit -> selectedFragment = AddOutfitFragment()
             }
 
             selectedFragment?.let {

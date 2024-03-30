@@ -5,11 +5,16 @@
         android:icon="@drawable/home_icon"
         android:title="Home" />
     <item
+        android:id="@+id/navigation_add_outfit"
+        android:icon="@drawable/add_icon"
+        android:title="Add Clothes" />
+    <item
         android:id="@+id/navigation_generate_outfit"
         android:icon="@drawable/clothes_icon"
         android:title="Generate Outfit" />
     <item
         android:id="@+id/navigation_wardrobe"
         android:icon="@drawable/closet_icon"
-        android:title="Wardrobe" />
+        android:title="Wardrobe"
+  />
 </menu>
