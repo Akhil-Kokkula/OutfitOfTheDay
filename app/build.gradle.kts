@@ -40,11 +40,8 @@ android {
 }
 
 dependencies {
-    // Room components
-    implementation("androidx.room:room-runtime:2.4.2")
-    annotationProcessor("androidx.room:room-compiler:2.4.2")
-    // Kotlin Extensions and Coroutines support for Room
-    implementation("androidx.room:room-ktx:2.4.2")
+    implementation("com.google.firebase:firebase-database-ktx")
+
 
     implementation(platform("com.google.firebase:firebase-bom:32.8.0"))
     implementation("com.google.firebase:firebase-auth")
