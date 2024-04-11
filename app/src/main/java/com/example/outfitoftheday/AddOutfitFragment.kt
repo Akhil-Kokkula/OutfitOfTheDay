@@ -8,7 +8,6 @@ import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
@@ -19,12 +18,15 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.ByteArrayOutputStream
 import android.util.Base64
-import android.widget.TextView
+import android.util.Log
+import android.widget.EditText
+import android.widget.ImageButton
+
 
 class AddOutfitFragment : Fragment() {
     private lateinit var imageView: ImageView
     private lateinit var takePictureLauncher: ActivityResultLauncher<Intent>
-    private lateinit var tvLabels: TextView
+    private lateinit var editText: EditText
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,10 +46,10 @@ class AddOutfitFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val view = inflater.inflate(R.layout.fragment_add_outfit, container, false)
         imageView = view.findViewById(R.id.imageViewCaptured)
-        val button: Button = view.findViewById(R.id.buttonCapture)
-        tvLabels = view.findViewById(R.id.tvLabels)
+        val buttonCapture: ImageButton = view.findViewById(R.id.buttonCapture)
+        editText = view.findViewById(R.id.editTextClothingDescription)
 
-        button.setOnClickListener {
+        buttonCapture.setOnClickListener {
             val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
             try {
                 takePictureLauncher.launch(takePictureIntent)
@@ -85,12 +87,16 @@ class AddOutfitFragment : Fragment() {
         visionService.annotateImage(request).enqueue(object : retrofit2.Callback<VisionModel.VisionResponse> {
             override fun onResponse(call: retrofit2.Call<VisionModel.VisionResponse>, response: retrofit2.Response<VisionModel.VisionResponse>) {
                 if (response.isSuccessful) {
+                    Log.d("AddOutfitFragment", "API Response: ${response.body()}")
                     val labels = response.body()?.responses?.firstOrNull()?.labelAnnotations
                     val descriptions = labels?.joinToString(separator = "\n") { it.description }
                     activity?.runOnUiThread {
-                        tvLabels.text = descriptions ?: "No labels found"
+                        val descriptions = labels?.joinToString(separator = ", ") { it.description }
+                        editText.setText(descriptions ?: "No labels found")
                     }
                 } else {
+                    Log.e("AddOutfitFragment", "API Error Response: ${response.errorBody()?.string()}")
+
                     Toast.makeText(context, "API request failed with code: ${response.code()}", Toast.LENGTH_LONG).show()
                 }
             }

@@ -5,6 +5,6 @@ import retrofit2.http.Body
 import retrofit2.http.POST
 
 interface VisionService {
-    @POST("v1/images:annotate?key=AIzaSyAJQCsD5Iq9b_t2Ecv0q3VMrPqUFNg7xzc")
+    @POST("v1/images:annotate?key=KEY_HERE")
     fun annotateImage(@Body request: VisionModel.VisionRequest): Call<VisionModel.VisionResponse>
 }
