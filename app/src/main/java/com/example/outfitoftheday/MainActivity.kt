@@ -15,7 +15,8 @@ class MainActivity : AppCompatActivity() {
 
         bottomNavigationView = findViewById(R.id.bottom_navigation)
 
-        val currUser = FirebaseAuth.getInstance().currentUser
+        val currUser =
+            FirebaseAuth.getInstance().currentUser
         println("current user is " + currUser?.email)
 
 
