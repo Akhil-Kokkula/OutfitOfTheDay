@@ -7,7 +7,6 @@ import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 
-
 class OutfitGalleryAdapter(
     private var outfitPhotosList: MutableList<OutfitPhoto>,
 ): RecyclerView.Adapter<OutfitGalleryAdapter.ClothingItemHolder>() {

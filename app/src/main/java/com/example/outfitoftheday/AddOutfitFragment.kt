@@ -79,7 +79,12 @@ class AddOutfitFragment : Fragment() {
             requests = listOf(
                 VisionModel.AnnotateImageRequest(
                     image = VisionModel.Image(content = base64Image),
-                    features = listOf(VisionModel.Feature())
+                    features = listOf(
+                        VisionModel.Feature(type = "LABEL_DETECTION", maxResults = 10),
+                        VisionModel.Feature(type = "LOGO_DETECTION", maxResults = 5),
+                        VisionModel.Feature(type = "IMAGE_PROPERTIES", maxResults = 1),
+                        VisionModel.Feature(type = "TEXT_DETECTION", maxResults = 10)
+                    )
                 )
             )
         )
@@ -87,16 +92,24 @@ class AddOutfitFragment : Fragment() {
         visionService.annotateImage(request).enqueue(object : retrofit2.Callback<VisionModel.VisionResponse> {
             override fun onResponse(call: retrofit2.Call<VisionModel.VisionResponse>, response: retrofit2.Response<VisionModel.VisionResponse>) {
                 if (response.isSuccessful) {
-                    Log.d("AddOutfitFragment", "API Response: ${response.body()}")
-                    val labels = response.body()?.responses?.firstOrNull()?.labelAnnotations
-                    val descriptions = labels?.joinToString(separator = "\n") { it.description }
+                    val responseBody = response.body()
+                    val labels = responseBody?.responses?.firstOrNull()?.labelAnnotations
+                    val logos = responseBody?.responses?.firstOrNull()?.logoAnnotations
+                    val colors = responseBody?.responses?.firstOrNull()?.imagePropertiesAnnotation?.dominantColors?.colors
+                    val texts = responseBody?.responses?.firstOrNull()?.textAnnotations
+
                     activity?.runOnUiThread {
                         val descriptions = labels?.joinToString(separator = ", ") { it.description }
-                        editText.setText(descriptions ?: "No labels found")
+                        val brandNames = logos?.joinToString(separator = ", ") { it.description }
+                        val textDescriptions = texts?.joinToString(separator = " ") { it.description } // Concatenate all detected text
+                        val dominantColor = colors?.maxByOrNull { it.pixelFraction }?.color?.let { color ->
+                            "R: ${color.red}, G: ${color.green}, B: ${color.blue}"
+                        }
+
+                        editText.setText("Labels: $descriptions\nBrands: $brandNames\nText: $textDescriptions\nDominant Color: $dominantColor")
                     }
                 } else {
                     Log.e("AddOutfitFragment", "API Error Response: ${response.errorBody()?.string()}")
-
                     Toast.makeText(context, "API request failed with code: ${response.code()}", Toast.LENGTH_LONG).show()
                 }
             }
@@ -106,4 +119,6 @@ class AddOutfitFragment : Fragment() {
             }
         })
     }
+
+
 }
