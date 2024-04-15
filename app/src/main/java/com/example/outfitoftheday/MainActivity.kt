@@ -1,25 +1,29 @@
 package com.example.outfitoftheday
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 
 class MainActivity : AppCompatActivity() {
     private lateinit var bottomNavigationView: BottomNavigationView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Initialize Firebase
+        FirebaseApp.initializeApp(this)
         setContentView(R.layout.activity_main)
 
         bottomNavigationView = findViewById(R.id.bottom_navigation)
 
-        val currUser =
-            FirebaseAuth.getInstance().currentUser
-        println("current user is " + currUser?.email)
+        // Check current Firebase user
+        val currUser = FirebaseAuth.getInstance().currentUser
+        println("Current user is " + currUser?.email)
 
-
+        // Navigation item selection handling with fragments
         bottomNavigationView.setOnItemSelectedListener { item ->
             var selectedFragment: Fragment? = null
 
@@ -37,15 +41,16 @@ class MainActivity : AppCompatActivity() {
             true
         }
 
-        if (savedInstanceState == null && currUser == null) {
-            bottomNavigationView.visibility = View.GONE
-            supportFragmentManager.beginTransaction().replace(R.id.nav_host_fragment, SignUpFragment()).commit()
-        } else if (savedInstanceState == null) {
-            supportFragmentManager.beginTransaction().replace(R.id.nav_host_fragment, HomeFragment()).commit()
+        // Initial fragment loading based on authentication status
+        if (savedInstanceState == null) {
+            if (currUser == null) {
+                // Hide bottom navigation and show the SignUpFragment if not logged in
+                bottomNavigationView.visibility = View.GONE
+                supportFragmentManager.beginTransaction().replace(R.id.nav_host_fragment, SignUpFragment()).commit()
+            } else {
+                // Show HomeFragment if logged in
+                supportFragmentManager.beginTransaction().replace(R.id.nav_host_fragment, HomeFragment()).commit()
+            }
         }
-
-
-
     }
-
 }

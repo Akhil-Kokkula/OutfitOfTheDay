@@ -1,49 +1,69 @@
 package com.example.outfitoftheday
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.outfitoftheday.R
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.ValueEventListener
-
-
-
-
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.RecyclerView
+import com.example.outfitoftheday.databinding.FragmentWardrobeBinding
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.*
 
 class WardrobeFragment : Fragment() {
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        val databaseReference = FirebaseDatabase.getInstance().getReference("wardrobe")
-        val item1 = ClothingItem("1", "T-Shirt", "https://www.google.com/url?sa=i&url=https%3A%2F%2Fen.m.wikipedia.org%2Fwiki%2FFile%3ABlue_Tshirt.jpg&psig=AOvVaw0CPUeaQSiH6woEI3TSt-Cn&ust=1712191587384000&source=images&cd=vfe&opi=89978449&ved=0CBIQjRxqFwoTCIDv5OvopIUDFQAAAAAdAAAAABAE")
-        val item2 = ClothingItem("2", "Jeans", "https://www.google.com/imgres?q=jeans%20image%20jpg&imgurl=https%3A%2F%2Ft3.ftcdn.net%2Fjpg%2F04%2F83%2F25%2F50%2F360_F_483255019_m1r1ujM8EOkr8PamCHF85tQ0rHG3Fiqz.jpg&imgrefurl=https%3A%2F%2Fstock.adobe.com%2Fsearch%3Fk%3Djeans&docid=MaCiVRDpVdLXzM&tbnid=iFGYxtXdjk1KBM&vet=12ahUKEwiI-ZWB6aSFAxUlrYkEHQ2HBJMQM3oECBkQAA..i&w=540&h=360&hcb=2&ved=2ahUKEwiI-ZWB6aSFAxUlrYkEHQ2HBJMQM3oECBkQAA")
-        databaseReference.child(item1.id).setValue(item1)
-        databaseReference.child(item2.id).setValue(item2)
+    private var _binding: FragmentWardrobeBinding? = null
+    private val binding get() = _binding!!
 
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var adapter: WardrobeAdapter
+    private lateinit var auth: FirebaseAuth
+    private lateinit var databaseReference: DatabaseReference
 
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        _binding = FragmentWardrobeBinding.inflate(inflater, container, false)
+        recyclerView = binding.wardrobeRecyclerView
+        auth = FirebaseAuth.getInstance()
+        setupFirebaseDatabase()
+
+        return binding.root
+    }
+
+    private fun setupFirebaseDatabase() {
+        val userId = auth.currentUser?.uid
+        if (userId == null) {
+            Log.e("WardrobeFragment", "User is not logged in.")
+            return
+        }
+
+        databaseReference = FirebaseDatabase.getInstance().getReference("wardrobes").child(userId)
         databaseReference.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val items = mutableListOf<ClothingItem>()
                 for (snapshot in dataSnapshot.children) {
                     val item = snapshot.getValue(ClothingItem::class.java)
-                    item?.let { items.add(it) }
+                    item?.let {
+                        it.id = snapshot.key
+                        items.add(it)
+                    }
                 }
-                // Update your UI with the items list
+                updateUI(items)
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
-                // Handle possible errors
+                Log.e("WardrobeFragment", "Failed to read wardrobe data", databaseError.toException())
             }
         })
+    }
 
+    private fun updateUI(items: List<ClothingItem>) {
+        adapter = WardrobeAdapter(items)
+        recyclerView.adapter = adapter
+    }
 
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_wardrobe, container, false)
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }
+
