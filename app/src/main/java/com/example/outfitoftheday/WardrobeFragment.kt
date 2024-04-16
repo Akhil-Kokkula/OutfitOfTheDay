@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.outfitoftheday.databinding.FragmentWardrobeBinding
 import com.google.android.material.button.MaterialButton
@@ -26,6 +27,7 @@ class WardrobeFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentWardrobeBinding.inflate(inflater, container, false)
         recyclerView = binding.wardrobeRecyclerView
+        recyclerView.layoutManager = LinearLayoutManager(context) // Ensuring the RecyclerView has a LinearLayoutManager set
         auth = FirebaseAuth.getInstance()
 
         // Initialize the button and set up its click listener
@@ -53,14 +55,12 @@ class WardrobeFragment : Fragment() {
                 for (snapshot in dataSnapshot.children) {
                     val item = snapshot.getValue(ClothingItem::class.java)
                     item?.let {
-                        // Assigning the key or a default value if the key is null
                         it.id = snapshot.key ?: "default_id"
                         items.add(it)
                     }
                 }
                 updateUI(items)
             }
-
 
             override fun onCancelled(databaseError: DatabaseError) {
                 Log.e("WardrobeFragment", "Failed to read wardrobe data", databaseError.toException())
@@ -72,9 +72,9 @@ class WardrobeFragment : Fragment() {
         val userId = FirebaseAuth.getInstance().currentUser?.uid
         if (userId != null) {
             val items = listOf(
-                ClothingItem("1", "T-Shirt", "https://example.com/tshirt.jpg"),
-                ClothingItem("2", "Jeans", "https://example.com/jeans.jpg"),
-                ClothingItem("3", "Sneakers", "https://example.com/sneakers.jpg")
+                ClothingItem("1", "T-Shirt", "https://cdn.pixabay.com/photo/2016/03/25/09/04/t-shirt-1278404_1280.jpg"),
+                ClothingItem("2", "Jeans", "https://t3.ftcdn.net/jpg/04/83/25/50/240_F_483255019_m1r1ujM8EOkr8PamCHF85tQ0rHG3Fiqz.jpg"),
+                ClothingItem("3", "Sneakers", "https://t4.ftcdn.net/jpg/03/54/69/59/240_F_354695920_fM951khS1fJe0DtXkl2E70y1y513Jj1p.jpg")
             )
 
             items.forEach { item ->
@@ -92,8 +92,6 @@ class WardrobeFragment : Fragment() {
         }
     }
 
-
-
     private fun updateUI(items: List<ClothingItem>) {
         adapter = WardrobeAdapter(items)
         recyclerView.adapter = adapter
@@ -101,6 +99,6 @@ class WardrobeFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        _binding = null
+        _binding = null  // Clear the binding when the view is destroyed to prevent memory leaks
     }
 }

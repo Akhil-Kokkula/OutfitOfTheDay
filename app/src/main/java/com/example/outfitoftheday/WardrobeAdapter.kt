@@ -1,9 +1,9 @@
 package com.example.outfitoftheday
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.outfitoftheday.databinding.ItemWardrobeBinding
 
 class WardrobeAdapter(private var items: List<ClothingItem>) :
@@ -24,10 +24,11 @@ class WardrobeAdapter(private var items: List<ClothingItem>) :
     class WardrobeViewHolder(private val binding: ItemWardrobeBinding) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: ClothingItem) {
-            binding.apply {
-                textViewName.text = item.name
-                // If using Glide or another library to load images:
-                // Glide.with(imageView.context).load(item.imageUrl).into(imageView)
+            binding.textViewName.text = item.name
+            if (item.imageUrl != null) {
+                Glide.with(binding.imageView.context)
+                    .load(item.imageUrl)
+                    .into(binding.imageView)
             }
         }
     }
