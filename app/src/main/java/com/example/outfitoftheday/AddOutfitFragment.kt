@@ -26,7 +26,10 @@ import android.widget.ImageButton
 class AddOutfitFragment : Fragment() {
     private lateinit var imageView: ImageView
     private lateinit var takePictureLauncher: ActivityResultLauncher<Intent>
-    private lateinit var editText: EditText
+    private lateinit var editTextLabel: EditText
+    private lateinit var editTextColor: EditText
+    private lateinit var editTextBrand: EditText
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,7 +50,6 @@ class AddOutfitFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_add_outfit, container, false)
         imageView = view.findViewById(R.id.imageViewCaptured)
         val buttonCapture: ImageButton = view.findViewById(R.id.buttonCapture)
-        editText = view.findViewById(R.id.editTextClothingDescription)
 
         buttonCapture.setOnClickListener {
             val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
@@ -92,21 +94,18 @@ class AddOutfitFragment : Fragment() {
         visionService.annotateImage(request).enqueue(object : retrofit2.Callback<VisionModel.VisionResponse> {
             override fun onResponse(call: retrofit2.Call<VisionModel.VisionResponse>, response: retrofit2.Response<VisionModel.VisionResponse>) {
                 if (response.isSuccessful) {
-                    val responseBody = response.body()
-                    val labels = responseBody?.responses?.firstOrNull()?.labelAnnotations
-                    val logos = responseBody?.responses?.firstOrNull()?.logoAnnotations
-                    val colors = responseBody?.responses?.firstOrNull()?.imagePropertiesAnnotation?.dominantColors?.colors
-                    val texts = responseBody?.responses?.firstOrNull()?.textAnnotations
+                    response.body()?.responses?.firstOrNull()?.let {
+                        val descriptions = it.labelAnnotations?.joinToString(separator = ", ") { label -> label.description }
+                        val brandNames = it.logoAnnotations?.joinToString(separator = ", ") { logo -> logo.description }
+                        val textDescriptions = it.textAnnotations?.joinToString(separator = " ") { text -> text.description }
+                        val dominantColor = it.imagePropertiesAnnotation?.dominantColors?.colors?.maxByOrNull { color -> color.pixelFraction }
+                            ?.color?.let { color -> "R: ${color.red}, G: ${color.green}, B: ${color.blue}" }
 
-                    activity?.runOnUiThread {
-                        val descriptions = labels?.joinToString(separator = ", ") { it.description }
-                        val brandNames = logos?.joinToString(separator = ", ") { it.description }
-                        val textDescriptions = texts?.joinToString(separator = " ") { it.description } // Concatenate all detected text
-                        val dominantColor = colors?.maxByOrNull { it.pixelFraction }?.color?.let { color ->
-                            "R: ${color.red}, G: ${color.green}, B: ${color.blue}"
+                        activity?.runOnUiThread {
+                            editTextLabel.setText(descriptions)
+                            editTextColor.setText(dominantColor)
+                            editTextBrand.setText("$brandNames $textDescriptions")
                         }
-
-                        editText.setText("Labels: $descriptions\nBrands: $brandNames\nText: $textDescriptions\nDominant Color: $dominantColor")
                     }
                 } else {
                     Log.e("AddOutfitFragment", "API Error Response: ${response.errorBody()?.string()}")

@@ -5,30 +5,69 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".AddOutfitFragment">
+    <FrameLayout
+        android:id="@+id/outfitOfTheDayContainer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="#8A2BE2"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/outfitOfTheDayLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Outfit of the Day"
+            android:textSize="20sp"
+            android:textColor="#FFFFFF"
+            android:layout_gravity="center"/>
+
+    </FrameLayout>
 
     <ImageView
         android:id="@+id/imageViewCaptured"
-        android:layout_width="409dp"
-        android:layout_height="317dp"
+        android:layout_width="323dp"
+        android:layout_height="225dp"
         android:adjustViewBounds="true"
         android:scaleType="fitCenter"
         android:src="@drawable/default_camera"
-        app:layout_constraintBottom_toTopOf="@id/editTextClothingDescription"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.5" />
+        app:layout_constraintTop_toBottomOf="@id/outfitOfTheDayContainer" />
 
     <EditText
-        android:id="@+id/editTextClothingDescription"
+        android:id="@+id/editTextLabel"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="e.g., Shirt, Blue, Nike"
+        android:hint="Label (e.g., T-shirt, skirt)"
         app:layout_constraintTop_toBottomOf="@id/imageViewCaptured"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp" />
+
+    <EditText
+        android:id="@+id/editTextColor"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Color (e.g., blue, red)"
+        app:layout_constraintTop_toBottomOf="@id/editTextLabel"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp" />
+
+    <EditText
+        android:id="@+id/editTextBrand"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Brand/Text (e.g., Nike, 'Just do it')"
+        app:layout_constraintTop_toBottomOf="@id/editTextColor"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp" />
 
@@ -43,8 +82,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/buttonCapture"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/editTextClothingDescription"
-        app:layout_constraintVertical_bias="0.4" />
+        app:layout_constraintTop_toBottomOf="@id/editTextBrand"
+        app:layout_constraintVertical_bias="0.225" />
 
     <ImageButton
         android:id="@+id/buttonCapture"
