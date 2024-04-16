@@ -12,10 +12,10 @@
         android:text="Generate Outfit"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintHorizontal_bias="0.513"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/weatherTextView"
-        app:layout_constraintVertical_bias="0.929" />
+        app:layout_constraintTop_toBottomOf="@+id/rvOutfitGallery"
+        app:layout_constraintVertical_bias="0.187" />
 
     <TextView
         android:id="@+id/weatherTextView"
@@ -30,21 +30,22 @@
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.495"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.05" />
+        app:layout_constraintVertical_bias="0.024" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/tilOccasion"
         style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="68dp"
         android:hint="Ocassion"
+        android:padding="20dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/weatherTextView"
-        android:padding="20dp" >
+        app:layout_constraintTop_toBottomOf="@+id/weatherTextView">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/occasionText"
@@ -58,29 +59,43 @@
         style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:hint="Duration of Outfit (hours)"
+        android:padding="20dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tilOccasion"
-        android:padding="20dp" >
+        app:layout_constraintTop_toBottomOf="@+id/tilOccasion">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/durationText"
-            android:inputType="number"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:inputType="number" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvOutfitGallery"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="399dp"
+        android:layout_height="221dp"
+        android:layout_marginTop="28dp"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toTopOf="@+id/generateOutfitButton"
+        android:padding="15dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:padding="15dp"
         app:layout_constraintTop_toBottomOf="@+id/tilDuration" />
+
+    <Button
+        android:id="@+id/loadCalendarButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Load Calendar"
+        app:layout_constraintBottom_toTopOf="@+id/tilOccasion"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/weatherTextView"
+        app:layout_constraintVertical_bias="0.025" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
