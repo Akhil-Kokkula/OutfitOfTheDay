@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.example.outfitoftheday.databinding.FragmentWardrobeBinding
+import com.google.android.material.button.MaterialButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 
@@ -19,11 +20,20 @@ class WardrobeFragment : Fragment() {
     private lateinit var adapter: WardrobeAdapter
     private lateinit var auth: FirebaseAuth
     private lateinit var databaseReference: DatabaseReference
+    private lateinit var addDummyDataBtn: MaterialButton
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentWardrobeBinding.inflate(inflater, container, false)
         recyclerView = binding.wardrobeRecyclerView
         auth = FirebaseAuth.getInstance()
+
+        // Initialize the button and set up its click listener
+        addDummyDataBtn = binding.btnAddDummyData
+        addDummyDataBtn.setOnClickListener {
+            addDummyItemsToDatabase()
+        }
+
         setupFirebaseDatabase()
 
         return binding.root
@@ -43,18 +53,46 @@ class WardrobeFragment : Fragment() {
                 for (snapshot in dataSnapshot.children) {
                     val item = snapshot.getValue(ClothingItem::class.java)
                     item?.let {
-                        it.id = snapshot.key
+                        // Assigning the key or a default value if the key is null
+                        it.id = snapshot.key ?: "default_id"
                         items.add(it)
                     }
                 }
                 updateUI(items)
             }
 
+
             override fun onCancelled(databaseError: DatabaseError) {
                 Log.e("WardrobeFragment", "Failed to read wardrobe data", databaseError.toException())
             }
         })
     }
+
+    private fun addDummyItemsToDatabase() {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
+        if (userId != null) {
+            val items = listOf(
+                ClothingItem("1", "T-Shirt", "https://example.com/tshirt.jpg"),
+                ClothingItem("2", "Jeans", "https://example.com/jeans.jpg"),
+                ClothingItem("3", "Sneakers", "https://example.com/sneakers.jpg")
+            )
+
+            items.forEach { item ->
+                val itemId = item.id ?: throw IllegalStateException("Item ID is null")
+                databaseReference.child(itemId).setValue(item)
+                    .addOnSuccessListener {
+                        Log.d("WardrobeFragment", "Item added successfully: ${item.name}")
+                    }
+                    .addOnFailureListener { e ->
+                        Log.e("WardrobeFragment", "Failed to add item: ${item.name}", e)
+                    }
+            }
+        } else {
+            Log.e("WardrobeFragment", "User not logged in")
+        }
+    }
+
+
 
     private fun updateUI(items: List<ClothingItem>) {
         adapter = WardrobeAdapter(items)
@@ -66,4 +104,3 @@ class WardrobeFragment : Fragment() {
         _binding = null
     }
 }
-

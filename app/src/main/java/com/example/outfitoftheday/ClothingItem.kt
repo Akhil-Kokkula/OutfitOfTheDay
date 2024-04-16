@@ -1,10 +1,11 @@
 package com.example.outfitoftheday
+
 import com.google.firebase.database.Exclude
+import com.google.firebase.database.IgnoreExtraProperties
 
-// for database
+@IgnoreExtraProperties
 data class ClothingItem(
-    @get:Exclude var id: String? = null,
-    var name: String = "",
-    var imageUrl: String = ""
+    @Exclude var id: String? = "", // Exclude the id from Firebase as it's often used as a key
+    var name: String? = "",
+    var imageUrl: String? = ""
 )
-
