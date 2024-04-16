@@ -35,6 +35,35 @@ import org.json.JSONArray
 import org.json.JSONObject
 import java.io.IOException
 import java.util.concurrent.TimeUnit
+import android.accounts.AccountManager
+import android.app.Activity
+import android.app.ProgressDialog
+import android.content.Intent
+import android.net.ConnectivityManager
+import android.text.TextUtils
+import androidx.lifecycle.lifecycleScope
+import com.example.outfitoftheday.GetEventModel
+import com.example.outfitoftheday.Constants.PREF_ACCOUNT_NAME
+import com.example.outfitoftheday.Constants.REQUEST_AUTHORIZATION
+import com.example.outfitoftheday.Constants.REQUEST_ACCOUNT_PICKER
+import com.example.outfitoftheday.Constants.REQUEST_GOOGLE_PLAY_SERVICES
+import com.example.outfitoftheday.Constants.REQUEST_PERMISSION_GET_ACCOUNTS
+import com.example.outfitoftheday.executeAsyncTask
+import com.google.android.gms.common.ConnectionResult
+import com.google.android.gms.common.GoogleApiAvailability
+import com.google.api.client.extensions.android.http.AndroidHttp
+import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential
+import com.google.api.client.googleapis.extensions.android.gms.auth.GooglePlayServicesAvailabilityIOException
+import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException
+import com.google.api.client.json.jackson2.JacksonFactory
+import com.google.api.client.util.DateTime
+import com.google.api.client.util.ExponentialBackOff
+import com.google.api.services.calendar.Calendar
+import com.google.api.services.calendar.CalendarScopes
+import kotlinx.coroutines.cancel
+import pub.devrel.easypermissions.EasyPermissions
+
+
 
 class GenerateOutfitFragment : Fragment() {
 
@@ -52,12 +81,20 @@ class GenerateOutfitFragment : Fragment() {
     private lateinit var generateOutfitButton: Button
     private val LOCATION_PERMISSION_REQUEST_CODE = 1001
 
+
     //Weather Variables
     private val client = OkHttpClient()
     private val locationAPIKEY = "O4YfE6O0SCM3xZvGwTbrlqaT0xyGm6ZU"
     private var weatherTemp = 0.0
     private var weatherPrecipitationProbability = 0.0
     private var weatherHumidity = 0.0
+
+    //Get Calendar Information
+    private var mCredential: GoogleAccountCredential? = null //to access our account
+    private var mService: Calendar? = null //To access the calendar
+    var mProgress: ProgressDialog? = null
+    private lateinit var calendarButton: Button
+    private var stringOfEvents = ""
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -67,6 +104,7 @@ class GenerateOutfitFragment : Fragment() {
 
         weatherTextView = view.findViewById(R.id.weatherTextView)
         generateOutfitButton = view.findViewById(R.id.generateOutfitButton)
+        calendarButton = view.findViewById(R.id.loadCalendarButton)
         occasionInputText = view.findViewById<TextInputLayout>(R.id.tilOccasion).editText!!
         durationInputText = view.findViewById<TextInputLayout>(R.id.tilDuration).editText!!
         // Initialize LocationManager
@@ -89,6 +127,12 @@ class GenerateOutfitFragment : Fragment() {
             generateOutfitAction()
         }
 
+        //Find Calendar Information
+        calendarButton.setOnClickListener {
+            getResultsFromApi()
+        }
+
+
         // Check for location permission
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             // Request location updates
@@ -97,6 +141,12 @@ class GenerateOutfitFragment : Fragment() {
             //Ask user for permission and then load location
             requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), LOCATION_PERMISSION_REQUEST_CODE)
         }
+
+        //Calendar Information Below:
+        mProgress = ProgressDialog(requireContext())
+        mProgress!!.setMessage("Loading...")
+        initCredentials()
+
         return view
     }
 
@@ -120,6 +170,12 @@ class GenerateOutfitFragment : Fragment() {
             aiTextStrBuilder.append("Occasion:\n")
             aiTextStrBuilder.append(occasionInputText.text.toString())
             aiTextStrBuilder.append("\n\n")
+
+            //Calendar Information:
+            aiTextStrBuilder.append("The itinerary for the user today:\n")
+            aiTextStrBuilder.append(stringOfEvents)
+            aiTextStrBuilder.append("\n\n")
+
             aiTextStrBuilder.append("User wardrobe:\n")
             //hardcoded now
             aiTextStrBuilder.append("item1: Crop Top, Pink, Casual\n" +
@@ -157,6 +213,7 @@ class GenerateOutfitFragment : Fragment() {
             outfitAIResponse = sendAndReceiveMessageFromClaude(aiTextStr)
             print("received ai response")
             print(outfitAIResponse)
+            Log.d("AI Request",  aiTextStr)
 
         }
     }
@@ -165,8 +222,8 @@ class GenerateOutfitFragment : Fragment() {
     private val locationListener: LocationListener = object : LocationListener {
         override fun onLocationChanged(location: Location) {
             // Handle location updates
-             latitude = location.latitude
-             longitude = location.longitude
+            latitude = location.latitude
+            longitude = location.longitude
 
             // Update weatherTextView with latitude
             locationManager.removeUpdates(this) //Only get location Data Once
@@ -202,7 +259,11 @@ class GenerateOutfitFragment : Fragment() {
                 }
             }
         }
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this)
     }
+
+
+
     //Run the Weather API Here:
     private fun run(url: String) {
         val request = Request.Builder()
@@ -240,7 +301,8 @@ class GenerateOutfitFragment : Fragment() {
                         //Need to use this to update UI in a run()
                         requireActivity().runOnUiThread {
                             if (isAdded) {
-                                weatherTextView.text= "Today's Weather Information:" + "\n" + "Temperature (F): " + "%.2f".format(weatherTemp) + "\n" + "Precipitation Probability: " + weatherPrecipitationProbability.toString() + "%\n" + "Humidity Percentage: " + weatherHumidity.toString() + "%"
+                                //weatherTextView.text= "Today's Weather Information:" + "\n" + "Temperature (F): " + "%.2f".format(weatherTemp) + "\n" + "Precipitation Probability: " + weatherPrecipitationProbability.toString() + "%\n" + "Humidity Percentage: " + weatherHumidity.toString() + "%"
+                                weatherTextView.text = "Weather Information Added!"
                             }
                             // Your UI update code here
                         }
@@ -364,4 +426,228 @@ class GenerateOutfitFragment : Fragment() {
 
         return resString
     }
+
+    //BELOW IS CALENDAR INFORMATION/FUNCTIONS
+    //Citation: ChatGPT and Tutorial (https://medium.com/@eneskocerr/get-events-to-your-android-app-using-google-calendar-api-4411119cd586)
+    //Tutorial had missing code segments, had to develop those myself.
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        when (requestCode) {
+            REQUEST_GOOGLE_PLAY_SERVICES -> if (resultCode != Activity.RESULT_OK) {
+
+            } else {
+                getResultsFromApi()
+            }
+            REQUEST_ACCOUNT_PICKER -> if (resultCode == Activity.RESULT_OK && data != null &&
+                data.extras != null
+            ) {
+                val accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME)
+                if (accountName != null) {
+                    val settings = this.activity?.getPreferences(Context.MODE_PRIVATE)
+                    val editor = settings?.edit()
+                    editor?.putString(PREF_ACCOUNT_NAME, accountName)
+                    editor?.apply()
+                    mCredential!!.selectedAccountName = accountName
+                    getResultsFromApi()
+                }
+            }
+            REQUEST_AUTHORIZATION -> if (resultCode == Activity.RESULT_OK) {
+                getResultsFromApi()
+            }
+        }
+    }
+
+    private fun initCredentials() {
+        mCredential = GoogleAccountCredential.usingOAuth2(
+            requireContext(),
+            arrayListOf(CalendarScopes.CALENDAR)
+        )
+            .setBackOff(ExponentialBackOff())
+        Log.d("Google", mCredential.toString())
+        initCalendarBuild(mCredential)
+    }
+
+    private fun initCalendarBuild(credential: GoogleAccountCredential?) {
+        val transport = AndroidHttp.newCompatibleTransport()
+        val jsonFactory = JacksonFactory.getDefaultInstance()
+        mService = Calendar.Builder(
+            transport, jsonFactory, credential
+        )
+            .setApplicationName("GetEventCalendar")
+            .build()
+    }
+
+    private fun getResultsFromApi() {
+        if (!isGooglePlayServicesAvailable()) {
+            acquireGooglePlayServices()
+        } else if (mCredential!!.selectedAccountName == null) {
+            chooseAccount()
+            Log.d("Google", "Here")
+        } else if (!isDeviceOnline()) {
+            //binding.txtOut.text = "No network connection available."
+        } else {
+            makeRequestTask()
+        }
+    }
+
+    private fun chooseAccount() {
+        if (EasyPermissions.hasPermissions(
+                requireContext(), Manifest.permission.GET_ACCOUNTS
+            )
+        ) {
+            val accountName = this.activity?.getPreferences(Context.MODE_PRIVATE)
+                ?.getString(PREF_ACCOUNT_NAME, null)
+            if (accountName != null) {
+                mCredential!!.selectedAccountName = accountName
+                Log.d("Google", accountName)
+                getResultsFromApi()
+            } else {
+                // Start a dialog from which the user can choose an account
+                startActivityForResult(
+                    mCredential!!.newChooseAccountIntent(),
+                    REQUEST_ACCOUNT_PICKER
+                )
+            }
+        } else {
+            // Request the GET_ACCOUNTS permission via a user dialog
+            Log.d("Test", "We enter this")
+            EasyPermissions.requestPermissions(
+                this,
+                "This app needs to access your Google account (via Contacts).",
+                REQUEST_PERMISSION_GET_ACCOUNTS,
+                Manifest.permission.GET_ACCOUNTS
+            )
+            calendarButton.text = "Click again to load calendar!"
+        }
+    }
+
+
+    private fun isGooglePlayServicesAvailable(): Boolean {
+        val apiAvailability = GoogleApiAvailability.getInstance()
+        val connectionStatusCode = apiAvailability.isGooglePlayServicesAvailable(requireContext())
+        return connectionStatusCode == ConnectionResult.SUCCESS
+    }
+
+    private fun acquireGooglePlayServices() {
+        val apiAvailability = GoogleApiAvailability.getInstance()
+        val connectionStatusCode = apiAvailability.isGooglePlayServicesAvailable(requireContext())
+        if (apiAvailability.isUserResolvableError(connectionStatusCode)) {
+            showGooglePlayServicesAvailabilityErrorDialog(connectionStatusCode)
+        }
+    }
+
+    fun showGooglePlayServicesAvailabilityErrorDialog(connectionStatusCode: Int) {
+        val apiAvailability = GoogleApiAvailability.getInstance()
+        val dialog = apiAvailability.getErrorDialog(
+            this,
+            connectionStatusCode,
+            REQUEST_GOOGLE_PLAY_SERVICES
+        )
+        dialog?.show()
+    }
+
+    private fun isDeviceOnline(): Boolean {
+        val connMgr =
+            this.activity?.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val networkInfo = connMgr.activeNetworkInfo
+        return networkInfo != null && networkInfo.isConnected
+    }
+
+    private fun makeRequestTask() {
+        var mLastError: Exception? = null
+
+        lifecycleScope.executeAsyncTask(
+            onStart = {
+                mProgress!!.show()
+            },
+            doInBackground = {
+                try {
+                    getDataFromCalendar()
+                } catch (e: Exception) {
+                    mLastError = e
+                    lifecycleScope.cancel()
+                    null
+                }
+            },
+            onPostExecute = { output ->
+                mProgress!!.hide()
+                if (output == null || output.size == 0) {
+                    Log.d("Google", "No Calendar Information")
+                } else {
+                    for (index in 0 until output.size) {
+                        stringOfEvents = stringOfEvents +  output[index].summary + "\n"
+                    }
+                    Log.d("Google", "These are your events for the day: \n$stringOfEvents")
+                    calendarButton.text = "Calendar Added!"
+                    calendarButton.isEnabled = false
+                }
+            },
+            onCancelled = {
+                mProgress!!.hide()
+                if (mLastError != null) {
+                    if (mLastError is GooglePlayServicesAvailabilityIOException) {
+                        showGooglePlayServicesAvailabilityErrorDialog(
+                            (mLastError as GooglePlayServicesAvailabilityIOException)
+                                .connectionStatusCode
+                        )
+                    } else if (mLastError is UserRecoverableAuthIOException) {
+                        this.startActivityForResult(
+                            (mLastError as UserRecoverableAuthIOException).intent,
+                            REQUEST_AUTHORIZATION
+                        )
+                    } else {
+                        //binding.txtOut.text =
+                        //  "The following error occurred:\n" + mLastError!!.message
+                    }
+                } else {
+                    //binding.txtOut.text = "Request cancelled."
+                }
+            }
+        )
+    }
+
+    fun getDataFromCalendar(): MutableList<GetEventModel> {
+        val now = DateTime(System.currentTimeMillis())
+        val end = DateTime(System.currentTimeMillis() + 86400000)
+        val eventStrings = ArrayList<GetEventModel>()
+
+
+        try {
+            val events = mService!!.events().list("primary")
+                .setMaxResults(10)
+                .setTimeMin(now)
+                .setTimeMax(end)
+                .setOrderBy("startTime")
+                .setSingleEvents(true)
+                .execute()
+            val items = events.items
+
+            for (event in items) {
+                var start = event.start.dateTime
+                if (start == null) {
+                    start = event.start.date
+                }
+
+                eventStrings.add(
+                    GetEventModel(
+                        summary = event.summary,
+                        startDate = start.toString()
+                    )
+                )
+            }
+            return eventStrings
+
+        } catch (e: IOException) {
+            if (e is UserRecoverableAuthIOException) {
+                startActivityForResult(e.intent, REQUEST_AUTHORIZATION);
+            } else {
+                // other cases
+            }
+        }
+        return eventStrings
+    }
+
+
 }

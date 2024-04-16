@@ -69,4 +69,25 @@ dependencies {
     implementation ("com.squareup.okhttp3:okhttp:4.9.3")
     implementation ("com.google.firebase:firebase-storage-ktx")
 
+    implementation ("joda-time:joda-time:2.10.13")
+
+
+    //Calendar APIs Start Here
+    implementation("com.google.oauth-client:google-oauth-client-jetty:1.23.0")
+    implementation("com.google.apis:google-api-services-calendar:v3-rev305-1.23.0"){
+        exclude("org.apache.httpcomponents")
+        exclude("com.google.guava")
+    }
+    implementation("com.google.android.gms:play-services-auth:20.4.0")
+
+//to avoid conflicts in libraries
+    implementation("com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava")
+
+    implementation("com.google.api-client:google-api-client-android:1.23.0") {
+        exclude("org.apache.httpcomponents")
+        exclude("com.google.guava")
+    }
+
+//to easily control permissions
+    implementation("pub.devrel:easypermissions:3.0.0")
 }
