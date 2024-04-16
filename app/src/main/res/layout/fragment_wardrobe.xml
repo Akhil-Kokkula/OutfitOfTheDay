@@ -16,16 +16,16 @@
             android:layout_height="0dp"
             android:padding="16dp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            app:layout_constraintBottom_toTopOf="@+id/btnAddDummyData"
+            app:layout_constraintBottom_toTopOf="@+id/btnRefreshData"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnAddDummyData"
+            android:id="@+id/btnRefreshData"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Add Dummy Data"
+            android:text="Refresh Data"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

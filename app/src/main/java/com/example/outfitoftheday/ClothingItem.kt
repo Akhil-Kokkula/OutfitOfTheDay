@@ -5,7 +5,10 @@ import com.google.firebase.database.IgnoreExtraProperties
 
 @IgnoreExtraProperties
 data class ClothingItem(
-    @Exclude var id: String? = "", // Exclude the id from Firebase as it's often used as a key
-    var name: String? = "",
-    var imageUrl: String? = ""
+    var id: String? = null,
+    val label: String? = null,
+    val color: String? = null,
+    val brand: String? = null,
+    val imageBase64: String? = null,
+    val imageUrl: String? = null
 )
