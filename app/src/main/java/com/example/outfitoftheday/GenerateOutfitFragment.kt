@@ -152,7 +152,7 @@ class GenerateOutfitFragment : Fragment() {
 
     private fun generateOutfitAction() {
         if (occasionInputText.text.toString() == "") {
-            Toast.makeText(context, "Please enter your occasion", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Please enter your preferred event for the day", Toast.LENGTH_SHORT).show()
         } else if (durationInputText.text.toString() == "" || durationInputText.text.toString().toInt() == 0) {
             Toast.makeText(context, "Please enter how long you will wear the outfit for in hours", Toast.LENGTH_SHORT).show()
         } else {
@@ -167,7 +167,7 @@ class GenerateOutfitFragment : Fragment() {
             aiTextStrBuilder.append("Weather Information:\n")
             aiTextStrBuilder.append(hourlyWeatherJSONString)
             aiTextStrBuilder.append("\n\n")
-            aiTextStrBuilder.append("Occasion:\n")
+            aiTextStrBuilder.append("The most important event of the user's day:\n")
             aiTextStrBuilder.append(occasionInputText.text.toString())
             aiTextStrBuilder.append("\n\n")
 
@@ -349,7 +349,7 @@ class GenerateOutfitFragment : Fragment() {
     }
 
     private fun sendAndReceiveMessageFromClaude(userMsg: String) : String {
-        val ANTHROPIC_API_KEY = "YOUR_ANTHROPIC_KEY"
+        val ANTHROPIC_API_KEY = ""
         val url = "https://api.anthropic.com/v1/messages"
         val headers = mapOf(
             "x-api-key" to ANTHROPIC_API_KEY,
