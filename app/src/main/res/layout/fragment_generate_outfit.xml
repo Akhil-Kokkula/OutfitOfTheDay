@@ -12,8 +12,26 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent">
 
+<<<<<<< HEAD
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/innerLayout"
+=======
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilOccasion"
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="68dp"
+        android:hint="Most Important Event for Today"
+        android:padding="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/weatherTextView">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/occasionText"
+>>>>>>> 218f17e62d4a4d0cdc1121f0ce3a6cb739303877
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
@@ -27,6 +45,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 android:padding="16dp">
 
+<<<<<<< HEAD
                 <TextView
                     android:id="@+id/outfitOfTheDayLabel"
                     android:layout_width="wrap_content"
@@ -37,6 +56,20 @@
                     android:textColor="#FFFFFF"
                     android:layout_gravity="center"/>
             </FrameLayout>
+=======
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/tilDuration"
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:hint="Duration of Time Outisde (hours)"
+        android:padding="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tilOccasion">
+>>>>>>> 218f17e62d4a4d0cdc1121f0ce3a6cb739303877
 
             <TextView
                 android:id="@+id/weatherTextView"
