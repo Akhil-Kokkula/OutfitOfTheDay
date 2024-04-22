@@ -1,11 +1,16 @@
 package com.example.outfitoftheday
 
 import android.Manifest
+import android.accounts.AccountManager
+import android.app.Activity
+import android.app.ProgressDialog
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
+import android.net.ConnectivityManager
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -13,44 +18,21 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
-import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import kotlin.properties.Delegates
-import android.widget.Toast
-import androidx.core.app.ActivityCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.textfield.TextInputEditText
-import com.google.android.material.textfield.TextInputLayout
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import okhttp3.*
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.RequestBody.Companion.toRequestBody
-import org.json.JSONArray
-import org.json.JSONObject
-import java.io.IOException
-import java.util.concurrent.TimeUnit
-import android.accounts.AccountManager
-import android.app.Activity
-import android.app.ProgressDialog
-import android.content.Intent
-import android.net.ConnectivityManager
-import android.text.TextUtils
-import androidx.lifecycle.lifecycleScope
-import com.example.outfitoftheday.GetEventModel
 import com.example.outfitoftheday.Constants.PREF_ACCOUNT_NAME
-import com.example.outfitoftheday.Constants.REQUEST_AUTHORIZATION
 import com.example.outfitoftheday.Constants.REQUEST_ACCOUNT_PICKER
+import com.example.outfitoftheday.Constants.REQUEST_AUTHORIZATION
 import com.example.outfitoftheday.Constants.REQUEST_GOOGLE_PLAY_SERVICES
 import com.example.outfitoftheday.Constants.REQUEST_PERMISSION_GET_ACCOUNTS
-import com.example.outfitoftheday.executeAsyncTask
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
+import com.google.android.material.textfield.TextInputLayout
 import com.google.api.client.extensions.android.http.AndroidHttp
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential
 import com.google.api.client.googleapis.extensions.android.gms.auth.GooglePlayServicesAvailabilityIOException
@@ -60,8 +42,21 @@ import com.google.api.client.util.DateTime
 import com.google.api.client.util.ExponentialBackOff
 import com.google.api.services.calendar.Calendar
 import com.google.api.services.calendar.CalendarScopes
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.Response
+import org.json.JSONArray
+import org.json.JSONObject
 import pub.devrel.easypermissions.EasyPermissions
+import java.io.IOException
+import java.util.concurrent.TimeUnit
 
 
 
@@ -349,11 +344,7 @@ class GenerateOutfitFragment : Fragment() {
     }
 
     private fun sendAndReceiveMessageFromClaude(userMsg: String) : String {
-<<<<<<< HEAD
-        val ANTHROPIC_API_KEY = "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"
-=======
         val ANTHROPIC_API_KEY = ""
->>>>>>> 218f17e62d4a4d0cdc1121f0ce3a6cb739303877
         val url = "https://api.anthropic.com/v1/messages"
         val headers = mapOf(
             "x-api-key" to ANTHROPIC_API_KEY,
