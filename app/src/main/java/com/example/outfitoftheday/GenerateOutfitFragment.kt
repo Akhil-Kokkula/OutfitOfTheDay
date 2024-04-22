@@ -349,7 +349,7 @@ class GenerateOutfitFragment : Fragment() {
     }
 
     private fun sendAndReceiveMessageFromClaude(userMsg: String) : String {
-        val ANTHROPIC_API_KEY = "YOUR_ANTHROPIC_KEY"
+        val ANTHROPIC_API_KEY = "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"
         val url = "https://api.anthropic.com/v1/messages"
         val headers = mapOf(
             "x-api-key" to ANTHROPIC_API_KEY,

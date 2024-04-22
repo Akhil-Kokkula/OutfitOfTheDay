@@ -152,6 +152,8 @@ class AddOutfitFragment : Fragment() {
             override fun onResponse(call: retrofit2.Call<VisionModel.VisionResponse>, response: retrofit2.Response<VisionModel.VisionResponse>) {
                 if (response.isSuccessful) {
                     response.body()?.responses?.firstOrNull()?.let {
+                        val gson = GsonBuilder().setPrettyPrinting().create()
+                        Log.d("AddOutfitFragment", "Vision API Response: ${gson.toJson(it)}")
                         val descriptions = it.labelAnnotations?.mapNotNull { label ->
                             label.description.toLowerCase(Locale.ROOT)
                         }?.filter { desc ->

@@ -29,4 +29,9 @@
         <item name="android:textColor">@color/white</item>
 
     </style>
+
+    <style name="GoldButton" parent="Widget.AppCompat.Button">
+        <item name="android:background">#FFD700</item>
+        <item name="android:textColor">#FFFFFF</item>
+    </style>
 </resources>

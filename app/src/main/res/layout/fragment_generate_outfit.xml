@@ -3,99 +3,124 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="#252525">
 
-    <Button
-        android:id="@+id/generateOutfitButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Generate Outfit"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.513"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/rvOutfitGallery"
-        app:layout_constraintVertical_bias="0.187" />
-
-    <TextView
-        android:id="@+id/weatherTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:layout_margin="8dp"
-        android:gravity="center"
-        android:padding="16dp"
-        android:text="Today's Weather Information:\nLoading"
-        android:textColor="@android:color/black"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.024" />
+        app:layout_constraintBottom_toBottomOf="parent">
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/tilOccasion"
-        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="68dp"
-        android:hint="Ocassion"
-        android:padding="20dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/weatherTextView">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/occasionText"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/innerLayout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content">
 
-    </com.google.android.material.textfield.TextInputLayout>
+            <FrameLayout
+                android:id="@+id/outfitOfTheDayContainer"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="#000000"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:padding="16dp">
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/tilDuration"
-        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:hint="Duration of Outfit (hours)"
-        android:padding="20dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tilOccasion">
+                <TextView
+                    android:id="@+id/outfitOfTheDayLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Outfit of the Day"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    android:textColor="#FFFFFF"
+                    android:layout_gravity="center"/>
+            </FrameLayout>
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/durationText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="number" />
+            <TextView
+                android:id="@+id/weatherTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Today's Weather Information:\nLoading"
+                android:textColor="#FFFFFF"
+                android:textSize="20sp"
+                android:gravity="center"
+                android:padding="16dp"
+                app:layout_constraintTop_toBottomOf="@id/outfitOfTheDayContainer" />
 
-    </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilOccasion"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="68dp"
+                android:hint="Occasion"
+                app:endIconTint="#FFFFFF"
+                app:hintTextColor="#FFFFFF"
+                android:textColorHint="#FFFFFF"
+                app:layout_constraintTop_toBottomOf="@id/weatherTextView">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvOutfitGallery"
-        android:layout_width="399dp"
-        android:layout_height="221dp"
-        android:layout_marginTop="28dp"
-        android:orientation="horizontal"
-        android:padding="15dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tilDuration" />
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/occasionText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="#FFFFFF" />
 
-    <Button
-        android:id="@+id/loadCalendarButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Load Calendar"
-        app:layout_constraintBottom_toTopOf="@+id/tilOccasion"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/weatherTextView"
-        app:layout_constraintVertical_bias="0.025" />
+            </com.google.android.material.textfield.TextInputLayout>
 
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/tilDuration"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:hint="Duration of Outfit (hours)"
+                app:endIconTint="#FFFFFF"
+                app:hintTextColor="#FFFFFF"
+                android:textColorHint="#FFFFFF"
+                app:layout_constraintTop_toBottomOf="@id/tilOccasion">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/durationText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:textColor="#FFFFFF" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvOutfitGallery"
+                android:layout_width="0dp"
+                android:layout_height="221dp"
+                android:layout_marginTop="28dp"
+                android:orientation="horizontal"
+                app:layout_constraintTop_toBottomOf="@id/tilDuration"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <Button
+                android:id="@+id/generateOutfitButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Generate Outfit"
+                android:textColor="#FFFFFF"
+                app:backgroundTint="#FFD700"
+                app:layout_constraintTop_toBottomOf="@id/rvOutfitGallery"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+            <Button
+                android:id="@+id/loadCalendarButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Load Calendar"
+                android:textColor="#FFFFFF"
+                app:backgroundTint="#FFD700"
+                app:layout_constraintTop_toBottomOf="@id/weatherTextView"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>
