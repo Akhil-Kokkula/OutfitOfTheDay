@@ -11,61 +11,48 @@
         android:layout_height="match_parent"
         android:background="#252525">
 
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+        <FrameLayout
+            android:id="@+id/outfitOfTheDayContainer"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="#000000"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent">
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:padding="16dp">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/innerLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/outfitOfTheDayLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Outfit of the Day"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"
+                android:layout_gravity="center"/>
+        </FrameLayout>
 
-                <FrameLayout
-                    android:id="@+id/outfitOfTheDayContainer"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:background="#000000"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    android:padding="16dp">
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/wardrobeRecyclerView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:padding="16dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintTop_toBottomOf="@id/outfitOfTheDayContainer"
+            app:layout_constraintBottom_toTopOf="@id/btnRefreshData"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
 
-                    <TextView
-                        android:id="@+id/outfitOfTheDayLabel"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Outfit of the Day"
-                        android:textSize="20sp"
-                        android:textStyle="bold"
-                        android:textColor="#FFFFFF"
-                        android:layout_gravity="center"/>
-                </FrameLayout>
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/wardrobeRecyclerView"
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:padding="16dp"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    app:layout_constraintTop_toBottomOf="@id/outfitOfTheDayContainer"
-                    app:layout_constraintBottom_toTopOf="@id/btnRefreshData"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"/>
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/btnRefreshData"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Refresh Data"
-                    android:textColor="#FFFFFF"
-                    app:backgroundTint="#FFD700"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    android:layout_marginBottom="16dp"/>
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </ScrollView>
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnRefreshData"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Refresh Data"
+            android:textColor="#FFFFFF"
+            app:backgroundTint="#FDB74F"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginBottom="16dp"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

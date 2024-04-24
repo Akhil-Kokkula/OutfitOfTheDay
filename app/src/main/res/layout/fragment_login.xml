@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#101010"
     tools:context=".LoginFragment">
 
     <com.google.android.material.textview.MaterialTextView
@@ -11,6 +12,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Login"
+        android:textStyle="bold"
+        android:textColor="#FFFFFF"
         android:textAppearance="?attr/textAppearanceHeadlineMedium"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -21,6 +24,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
+        app:cardBackgroundColor="#FFFFFF"
         app:cardCornerRadius="8dp"
         app:cardElevation="4dp"
         app:layout_constraintEnd_toEndOf="@+id/guideline_end"
@@ -39,12 +43,14 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
                 android:hint="Email"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:layout_editor_absoluteX="16dp">
+                app:boxStrokeColor="#000000"
+                app:hintTextColor="#707070"
+                app:layout_constraintTop_toTopOf="parent">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:textColor="#000000" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -56,16 +62,17 @@
                 android:layout_marginTop="16dp"
                 android:hint="Password"
                 app:endIconMode="password_toggle"
-                app:layout_constraintTop_toBottomOf="@id/tilEmail"
-                tools:layout_editor_absoluteX="16dp">
+                app:boxStrokeColor="#000000"
+                app:hintTextColor="#707070"
+                app:layout_constraintTop_toBottomOf="@id/tilEmail">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:textColor="#000000"
                     android:inputType="textPassword" />
 
             </com.google.android.material.textfield.TextInputLayout>
-
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnLogIn"
@@ -73,6 +80,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:text="Log In"
+                android:textColor="#FFFFFF"
+                android:backgroundTint="#FF9800"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
@@ -80,18 +89,35 @@
                 app:layout_constraintTop_toBottomOf="@+id/tilPassword"
                 app:layout_constraintVertical_bias="0.194" />
 
-
-
         </androidx.constraintlayout.widget.ConstraintLayout>
-
-
 
     </com.google.android.material.card.MaterialCardView>
 
+    <TextView
+        android:id="@+id/tvOr"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="or"
+        android:textSize="20sp"
+        android:textColor="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cardView" />
 
-
-
-
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnSignUp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Sign Up Here"
+        android:backgroundTint="#FDB74F"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/guideline_end"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/guideline_start"
+        app:layout_constraintTop_toBottomOf="@+id/tvOr"
+        android:layout_margin="16dp"
+        app:layout_constraintVertical_bias="0.131" />
 
 
     <androidx.constraintlayout.widget.Guideline
