@@ -1,5 +1,5 @@
 package com.example.outfitoftheday
 
 data class OutfitPhoto(
-    val photoUrl: String
+    val imageBase64: String
 )
