@@ -1,31 +1,32 @@
 package com.example.outfitoftheday
 
+import VisionModel
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Base64
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
 import com.google.gson.GsonBuilder
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.ByteArrayOutputStream
-import android.util.Base64
-import android.util.Log
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageButton
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.FirebaseDatabase
 import java.util.Locale
-import java.util.UUID
+import kotlin.math.sqrt
 
 
 class AddOutfitFragment : Fragment() {
@@ -38,10 +39,47 @@ class AddOutfitFragment : Fragment() {
         "T-shirt", "skirt", "shoes", "pants", "dress", "shirt", "jacket", "hat",
         "blouse", "sweater", "shorts", "socks", "scarf", "coat", "jeans",
         "boots", "sandals", "cap", "gloves", "belt", "tie", "swimsuit",
-        "underwear", "leggings", "pullover"
+        "underwear", "leggings", "pullover", "athletic", "formal",
+        "cargo pants", "hoodie", "cardigan", "blazer", "bikini", "halter top",
+        "high heels", "loafers", "suit", "tuxedo", "vest", "windbreaker",
+        "yoga pants", "kimono", "jumpsuit", "sari", "kilt", "toga", "sarong"
     )
     private lateinit var buttonSubmit: Button
     private var capturedImageBitmap: Bitmap? = null
+    data class NamedColor(val name: String, val r: Int, val g: Int, val b: Int)
+
+    private val colorList = listOf(
+        NamedColor("Red", 255, 0, 0),
+        NamedColor("Green", 0, 255, 0),
+        NamedColor("Blue", 0, 0, 255),
+        NamedColor("Black", 0, 0, 0),
+        NamedColor("White", 255, 255, 255),
+        NamedColor("Orange", 255, 165, 0),
+        NamedColor("Yellow", 255, 255, 0),
+        NamedColor("Purple", 128, 0, 128),
+        NamedColor("Grey", 128, 128, 128),
+        NamedColor("Brown", 165, 42, 42),
+        NamedColor("Magenta", 255, 0, 255),
+        NamedColor("Tan", 210, 180, 140),
+        NamedColor("Cyan", 0, 255, 255),
+        NamedColor("Olive", 128, 128, 0),
+        NamedColor("Maroon", 128, 0, 0),
+        NamedColor("Navy", 0, 0, 128),
+        NamedColor("Aquamarine", 127, 255, 212),
+        NamedColor("Turquoise", 64, 224, 208),
+        NamedColor("Silver", 192, 192, 192),
+        NamedColor("Lime", 0, 255, 0),
+        NamedColor("Coral", 255, 127, 80),
+        NamedColor("Salmon", 250, 128, 114),
+        NamedColor("Pink", 255, 192, 203)
+    )
+
+    private fun getClosestColorName(r: Int, g: Int, b: Int): String {
+        return colorList.minByOrNull { color ->
+            // Calculate Euclidean distance between the color parameter and each color in the list
+            sqrt(((color.r - r) * (color.r - r) + (color.g - g) * (color.g - g) + (color.b - b) * (color.b - b)).toDouble())
+        }?.name ?: "Unknown Color"
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -153,21 +191,25 @@ class AddOutfitFragment : Fragment() {
                     response.body()?.responses?.firstOrNull()?.let {
                         val gson = GsonBuilder().setPrettyPrinting().create()
                         Log.d("AddOutfitFragment", "Vision API Response: ${gson.toJson(it)}")
-                        val descriptions = it.labelAnnotations?.mapNotNull { label ->
+
+                        val descriptions = it.labelAnnotations?.map { label ->
                             label.description.toLowerCase(Locale.ROOT)
                         }?.filter { desc ->
                             allowedClothingTypes.any { type -> type.equals(desc, ignoreCase = true) }
                         }?.joinToString(", ")
 
-                        val brandNames = it.logoAnnotations?.mapNotNull { logo -> logo.description }?.joinToString(", ")
-                        val textDescriptions = it.textAnnotations?.mapNotNull { text -> text.description }?.joinToString(" ")
+                        val brandNames = it.logoAnnotations?.map { logo -> logo.description }?.joinToString(", ")
+                        val textDescriptions = it.textAnnotations?.map { text -> text.description }?.joinToString(" ")
 
-                        val dominantColor = it.imagePropertiesAnnotation?.dominantColors?.colors?.maxByOrNull { color -> color.pixelFraction }
-                            ?.color?.let { color -> "R: ${color.red}, G: ${color.green}, B: ${color.blue}" }
+                        // Extracting dominant color and converting it to a named color
+                        val dominantColorInfo = it.imagePropertiesAnnotation?.dominantColors?.colors?.maxByOrNull { color -> color.pixelFraction }
+                        val closestColorName = dominantColorInfo?.color?.let { color ->
+                            getClosestColorName(color.red, color.green, color.blue) // Converting RGB to color name
+                        } ?: "No color detected"
 
                         activity?.runOnUiThread {
                             editTextLabel.setText(descriptions ?: "No label detected")
-                            editTextColor.setText(dominantColor ?: "No color detected")
+                            editTextColor.setText(closestColorName) // Using the named color
 
                             editTextBrand.setText(listOfNotNull(brandNames, textDescriptions).joinToString(" ").ifBlank { "No brand or text detected" })
                         }
@@ -177,7 +219,6 @@ class AddOutfitFragment : Fragment() {
                     Toast.makeText(context, "API request failed with code: ${response.code()}", Toast.LENGTH_LONG).show()
                 }
             }
-
             override fun onFailure(call: retrofit2.Call<VisionModel.VisionResponse>, t: Throwable) {
                 Toast.makeText(context, "API request failed: ${t.message}", Toast.LENGTH_LONG).show()
             }
