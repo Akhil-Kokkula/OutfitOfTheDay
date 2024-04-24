@@ -1,41 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#252525">
+    android:fillViewport="true">
 
-    <Button
-        android:id="@+id/generateOutfitButton"
-        android:layout_width="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Generate Outfit"
-        android:textColor="#FFFFFF"
-        app:backgroundTint="#FDB74F"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.513"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/rvOutfitGallery"
-        app:layout_constraintVertical_bias="0.187" />
+    android:background="#252525">
 
     <TextView
         android:id="@+id/weatherTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
         android:layout_margin="8dp"
         android:gravity="center"
         android:padding="16dp"
         android:text="Today's Weather Information:\nLoading"
         android:textColor="#FFFFFF"
         android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.024" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/tilOccasion"
@@ -47,17 +35,15 @@
         app:endIconTint="#FFFFFF"
         app:hintTextColor="#FFFFFF"
         android:textColorHint="#FFFFFF"
+        app:layout_constraintTop_toBottomOf="@+id/weatherTextView"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/weatherTextView">
+        app:layout_constraintStart_toStartOf="parent">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/occasionText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="#FFFFFF" />
-
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -70,10 +56,9 @@
         app:endIconTint="#FFFFFF"
         app:hintTextColor="#FFFFFF"
         android:textColorHint="#FFFFFF"
+        app:layout_constraintTop_toBottomOf="@+id/tilOccasion"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tilOccasion">
+        app:layout_constraintStart_toStartOf="parent">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/durationText"
@@ -81,7 +66,6 @@
             android:layout_height="wrap_content"
             android:inputType="number"
             android:textColor="#FFFFFF" />
-
     </com.google.android.material.textfield.TextInputLayout>
 
     <androidx.recyclerview.widget.RecyclerView
@@ -89,11 +73,9 @@
         android:layout_width="399dp"
         android:layout_height="221dp"
         android:layout_marginTop="28dp"
-        android:orientation="horizontal"
-        android:padding="15dp"
+        app:layout_constraintTop_toBottomOf="@+id/tilDuration"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tilDuration" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/loadCalendarButton"
@@ -103,10 +85,22 @@
         android:text="Load Calendar"
         android:textColor="#FFFFFF"
         app:backgroundTint="#FDB74F"
-        app:layout_constraintBottom_toTopOf="@+id/tilOccasion"
+        app:layout_constraintTop_toBottomOf="@+id/weatherTextView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/generateOutfitButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Generate Outfit"
+        android:textColor="#FFFFFF"
+        app:backgroundTint="#FDB74F"
+        app:layout_constraintTop_toBottomOf="@+id/rvOutfitGallery"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/weatherTextView"
-        app:layout_constraintVertical_bias="0.025" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="16dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
