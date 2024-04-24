@@ -59,6 +59,7 @@
                 android:layout_height="wrap_content"
                 android:hint="Label (e.g., T-shirt, skirt)"
                 android:textColorHint="#FFFFFF"
+
                 app:layout_constraintTop_toBottomOf="@id/imageViewCaptured"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -96,7 +97,7 @@
                 android:layout_height="wrap_content"
                 android:text="Add to Wardrobe"
                 android:textColor="#FFFFFF"
-                app:backgroundTint="#FFD700"
+                app:backgroundTint="#FDB74F"
                 app:cornerRadius="16dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toStartOf="@id/buttonCapture"
