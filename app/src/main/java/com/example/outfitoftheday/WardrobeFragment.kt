@@ -6,7 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.outfitoftheday.databinding.FragmentWardrobeBinding
 import com.google.firebase.auth.FirebaseAuth
@@ -29,7 +29,7 @@ class WardrobeFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentWardrobeBinding.inflate(inflater, container, false)
         recyclerView = binding.wardrobeRecyclerView
-        recyclerView.layoutManager = LinearLayoutManager(context)
+        recyclerView.layoutManager = GridLayoutManager(context, 2)
         auth = FirebaseAuth.getInstance()
 
         setupFirebaseDatabase()

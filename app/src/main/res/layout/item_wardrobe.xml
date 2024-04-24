@@ -1,50 +1,47 @@
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
     app:cardElevation="4dp"
     app:cardCornerRadius="8dp">
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="16dp">
 
         <ImageView
             android:id="@+id/imageView"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
             android:scaleType="centerCrop"
             tools:src="@tools:sample/avatars" />
 
         <TextView
             android:id="@+id/textViewLabel"
-            android:layout_width="match_parent"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:text="Label"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:paddingTop="8dp"
-            tools:text="T-Shirt" />
+            android:paddingTop="8dp" />
 
         <TextView
             android:id="@+id/textViewColor"
-            android:layout_width="match_parent"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:text="Color"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:paddingTop="4dp"
-            tools:text="Blue" />
+            android:paddingTop="4dp" />
 
         <TextView
             android:id="@+id/textViewBrand"
-            android:layout_width="match_parent"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
-            android:text="Brand"
+            android:text="Text"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:paddingTop="4dp"
-            tools:text="Nike" />
+            android:paddingTop="4dp" />
     </LinearLayout>
 </androidx.cardview.widget.CardView>
