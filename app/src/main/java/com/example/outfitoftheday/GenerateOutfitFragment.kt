@@ -42,9 +42,17 @@ import com.google.api.client.util.DateTime
 import com.google.api.client.util.ExponentialBackOff
 import com.google.api.services.calendar.Calendar
 import com.google.api.services.calendar.CalendarScopes
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.MediaType.Companion.toMediaType
@@ -64,12 +72,12 @@ class GenerateOutfitFragment : Fragment() {
 
     private lateinit var locationManager: LocationManager
     private lateinit var outfitPhotoGallery : RecyclerView
-    private lateinit var outfitPhotoList : MutableList<OutfitPhoto>
+    private lateinit var outfitGalleryAdapter : OutfitGalleryAdapter
     private lateinit var occasionInputText : EditText
     private lateinit var durationInputText : EditText
     private lateinit var weatherJSONObject : JSONObject
     private lateinit var hourlyWeatherJSONString : String
-    private lateinit var outfitAIResponse : String
+    private lateinit var wardrobeList : MutableList<ClothingItem>
     private var latitude = 0.0
     private var longitude = 0.0
     private lateinit var weatherTextView: TextView
@@ -91,6 +99,9 @@ class GenerateOutfitFragment : Fragment() {
     private lateinit var calendarButton: Button
     private var stringOfEvents = ""
 
+    private lateinit var auth: FirebaseAuth
+    private lateinit var databaseReference: DatabaseReference
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -108,14 +119,12 @@ class GenerateOutfitFragment : Fragment() {
         outfitPhotoGallery = view.findViewById(R.id.rvOutfitGallery)
         outfitPhotoGallery.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
 
-        outfitPhotoList = mutableListOf(
-            OutfitPhoto("https://static.vecteezy.com/system/resources/previews/004/141/669/non_2x/no-photo-or-blank-image-icon-loading-images-or-missing-image-mark-image-not-available-or-image-coming-soon-sign-simple-nature-silhouette-in-frame-isolated-illustration-vector.jpg"),
-            OutfitPhoto("https://static.vecteezy.com/system/resources/previews/004/141/669/non_2x/no-photo-or-blank-image-icon-loading-images-or-missing-image-mark-image-not-available-or-image-coming-soon-sign-simple-nature-silhouette-in-frame-isolated-illustration-vector.jpg"),
-            OutfitPhoto("https://static.vecteezy.com/system/resources/previews/004/141/669/non_2x/no-photo-or-blank-image-icon-loading-images-or-missing-image-mark-image-not-available-or-image-coming-soon-sign-simple-nature-silhouette-in-frame-isolated-illustration-vector.jpg"),
-            OutfitPhoto("https://static.vecteezy.com/system/resources/previews/004/141/669/non_2x/no-photo-or-blank-image-icon-loading-images-or-missing-image-mark-image-not-available-or-image-coming-soon-sign-simple-nature-silhouette-in-frame-isolated-illustration-vector.jpg")
-        )
 
-        val outfitGalleryAdapter = OutfitGalleryAdapter(outfitPhotoList)
+
+        auth = FirebaseAuth.getInstance()
+        setupFirebaseDatabase()
+
+        outfitGalleryAdapter = OutfitGalleryAdapter(mutableListOf())
         outfitPhotoGallery.adapter = outfitGalleryAdapter
 
         generateOutfitButton.setOnClickListener {
@@ -145,6 +154,16 @@ class GenerateOutfitFragment : Fragment() {
         return view
     }
 
+    private fun setupFirebaseDatabase() {
+        val userId = auth.currentUser?.uid
+        if (userId == null) {
+            Log.e("GenerateOutfitFragment", "User is not logged in.")
+            return
+        }
+
+        databaseReference = FirebaseDatabase.getInstance().getReference("users/$userId/outfits")
+    }
+
     private fun generateOutfitAction() {
         if (occasionInputText.text.toString() == "") {
             Toast.makeText(context, "Please enter your preferred event for the day", Toast.LENGTH_SHORT).show()
@@ -155,10 +174,10 @@ class GenerateOutfitFragment : Fragment() {
             val aiTextStrBuilder = StringBuilder()
             aiTextStrBuilder.append("You are a fashion stylist and you must give the user a full outfit for the day. ")
             aiTextStrBuilder.append("Here is the expected output format you need to provide and please only answer in this format:\n" +
-                    "item1: T-shirt, White, Casual\n" +
-                    "item2: Jeans, Light Blue, Casual\n" +
-                    "item10: Sneakers, White, Casual\n" +
-                    "item17: Aviator Sunglasses, Black, Casual\n\n")
+                    "item -NvcyBYui5a1z-UH8Yfh: T-shirt, White, Casual\n" +
+                    "item -NvcyBYui5a1z-UH7Ghy: Jeans, Light Blue, Casual\n" +
+                    "item -NvcyBYui5a1z-UH6Ynh: Sneakers, White, Casual\n" +
+                    "item -NvcyBYui5a1z-UH5Gfl: Aviator Sunglasses, Black, Casual\n\n")
             aiTextStrBuilder.append("Weather Information:\n")
             aiTextStrBuilder.append(hourlyWeatherJSONString)
             aiTextStrBuilder.append("\n\n")
@@ -173,45 +192,116 @@ class GenerateOutfitFragment : Fragment() {
 
             aiTextStrBuilder.append("User wardrobe:\n")
             //hardcoded now
-            aiTextStrBuilder.append("item1: Crop Top, Pink, Casual\n" +
-                    "item2: High-Waisted Jeans, Medium Wash, Casual\n" +
-                    "item3: Off-Shoulder Blouse, Floral Print, Casual\n" +
-                    "item4: Midi Skirt, Beige, Casual\n" +
-                    "item5: Leather Moto Jacket, Black, Casual\n" +
-                    "item6: Suede Jacket, Camel, Casual\n" +
-                    "item7: Knit Sweater Dress, Burgundy, Casual\n" +
-                    "item8: Pullover Hoodie, Gray, Casual\n" +
-                    "item9: Blazer, Navy Blue, Formal/Business\n" +
-                    "item10: Slip-on Sneakers, Pastel Pink, Casual\n" +
-                    "item11: Pointed Toe Flats, Nude, Formal\n" +
-                    "item12: Ankle Boots, Black, Casual/Formal\n" +
-                    "item13: Skinny Belt, Red, Casual/Formal\n" +
-                    "item14: Chain Belt, Gold, Casual/Formal\n" +
-                    "item15: Rose Gold Watch, Rose Gold, Casual/Formal\n" +
-                    "item16: Leather Cuff Bracelet, Brown, Casual/Formal\n" +
-                    "item17: Cat-eye Sunglasses, Tortoise Shell, Casual\n" +
-                    "item18: Round Sunglasses, Gold Frame, Casual\n" +
-                    "item19: Yoga Leggings, Black, Sportswear\n" +
-                    "item20: Sports Bra, Purple, Sportswear\n" +
-                    "item21: Rain Jacket, Yellow, Casual\n" +
-                    "item22: Puffer Jacket, Navy Blue, Casual/Formal\n")
+//            aiTextStrBuilder.append("item1: Crop Top, Pink, Casual\n" +
+//                    "item2: High-Waisted Jeans, Medium Wash, Casual\n" +
+//                    "item3: Off-Shoulder Blouse, Floral Print, Casual\n" +
+//                    "item4: Midi Skirt, Beige, Casual\n" +
+//                    "item5: Leather Moto Jacket, Black, Casual\n" +
+//                    "item6: Suede Jacket, Camel, Casual\n" +
+//                    "item7: Knit Sweater Dress, Burgundy, Casual\n" +
+//                    "item8: Pullover Hoodie, Gray, Casual\n" +
+//                    "item9: Blazer, Navy Blue, Formal/Business\n" +
+//                    "item10: Slip-on Sneakers, Pastel Pink, Casual\n" +
+//                    "item11: Pointed Toe Flats, Nude, Formal\n" +
+//                    "item12: Ankle Boots, Black, Casual/Formal\n" +
+//                    "item13: Skinny Belt, Red, Casual/Formal\n" +
+//                    "item14: Chain Belt, Gold, Casual/Formal\n" +
+//                    "item15: Rose Gold Watch, Rose Gold, Casual/Formal\n" +
+//                    "item16: Leather Cuff Bracelet, Brown, Casual/Formal\n" +
+//                    "item17: Cat-eye Sunglasses, Tortoise Shell, Casual\n" +
+//                    "item18: Round Sunglasses, Gold Frame, Casual\n" +
+//                    "item19: Yoga Leggings, Black, Sportswear\n" +
+//                    "item20: Sports Bra, Purple, Sportswear\n" +
+//                    "item21: Rain Jacket, Yellow, Casual\n" +
+//                    "item22: Puffer Jacket, Navy Blue, Casual/Formal\n")
 
-            aiTextStrBuilder.append("\n\n")
-            aiTextStrBuilder.append("Please generate an outfit for me")
+            fetchDataFromDatabase { items ->
+                //print(items)
+                wardrobeList = items
+                for (clothingItem in items) {
+                    //println("item ${clothingItem.id}: ${clothingItem.label}, ${clothingItem.color}, ${clothingItem.brand}")
+                    aiTextStrBuilder.append("item ${clothingItem.id}: ${clothingItem.label}, ${clothingItem.color}, ${clothingItem.brand}\n")
+                }
+
+                aiTextStrBuilder.append("\n\n")
+                aiTextStrBuilder.append("Please generate an outfit for me")
 
 
 
-            val aiTextStr = aiTextStrBuilder.toString()
-            println("will send to ai")
-            println(aiTextStr)
+                val aiTextStr = aiTextStrBuilder.toString()
+                println("will send to ai")
+                println(aiTextStr)
 
-            outfitAIResponse = sendAndReceiveMessageFromClaude(aiTextStr)
-            print("received ai response")
-            print(outfitAIResponse)
-            Log.d("AI Request",  aiTextStr)
+                sendAndReceiveMessageFromClaude(aiTextStr) { outfitAIResponseStr ->
+                    val regex = Regex("""item ([\w-]+):""")
+                    val clothingIds = outfitAIResponseStr
+                        .split("\n")
+                        .filter { it.startsWith("item") }
+                        .mapNotNull { regex.find(it)?.groupValues?.get(1) }
+                    println(clothingIds)
+
+                    val outfitImageUrls = mutableListOf<OutfitPhoto>()
+                    wardrobeList.forEach { item ->
+                        if (item.id in clothingIds) {
+                            outfitImageUrls.add(OutfitPhoto(item.imageBase64.toString()))
+                        }
+                    }
+                    println(outfitImageUrls)
+
+                    GlobalScope.launch(Dispatchers.Main) {
+                        outfitGalleryAdapter.updatingOutfitList(outfitImageUrls)
+                        outfitPhotoGallery.scrollToPosition(0)
+                    }
+
+
+                }
+
+
+
+//                outfitAIResponse = "item -Nw66nMmYtivfPwHCT7Y: Sports shirt, Gray, Gym\n" +
+//                "item -NvcyBYui5a1z-UH8Yfh: Shorts, Gray, Gym\n" +
+//                "item -NvcydVXq6oJmBGjECkR: Sneakers, Gray, Gym"
+
+
+
+
+
+
+
+            }
+
+
+
+//            print("received ai response")
+//            print(outfitAIResponse)
+//            Log.d("AI Request",  aiTextStr)
 
         }
     }
+
+    private fun fetchDataFromDatabase(callback: (MutableList<ClothingItem>) -> Unit) {
+        val items = mutableListOf<ClothingItem>()
+        databaseReference.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                for (snapshot in dataSnapshot.children) {
+                    val item = snapshot.getValue(ClothingItem::class.java)
+                    item?.let {
+                        it.id = snapshot.key
+                        items.add(it)
+                    }
+                }
+                // Call the callback function with the fetched items
+                //println(items)
+                callback(items)
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                Log.e("GenerateOutfitFragment", "Failed to read wardrobe data", databaseError.toException())
+                callback(mutableListOf<ClothingItem>())
+            }
+        })
+    }
+
 
     // Define a LocationListener
     private val locationListener: LocationListener = object : LocationListener {
@@ -343,7 +433,7 @@ class GenerateOutfitFragment : Fragment() {
         println(hourlyWeatherJSONString)
     }
 
-    private fun sendAndReceiveMessageFromClaude(userMsg: String) : String {
+    private fun sendAndReceiveMessageFromClaude(userMsg: String, callback: (String) -> Unit){
         val ANTHROPIC_API_KEY = ""
         val url = "https://api.anthropic.com/v1/messages"
         val headers = mapOf(
@@ -382,7 +472,7 @@ class GenerateOutfitFragment : Fragment() {
             .post(requestBody)
             .build()
 
-        var resString = ""
+
         lifecycleScope.launch(Dispatchers.IO) {
             try {
                 Log.d("Claude API", "Executing API request")
@@ -400,7 +490,7 @@ class GenerateOutfitFragment : Fragment() {
                         if (contentObject.has("text")) {
                             val contentText = contentObject.getString("text")
                             Log.d("Claude API", "Content Text: $contentText")
-                            resString = contentText
+                            callback(contentText)
                         } else {
                             Log.e("Claude API", "No 'text' field found in content array")
                         }
@@ -419,7 +509,9 @@ class GenerateOutfitFragment : Fragment() {
             }
         }
 
-        return resString
+
+
+
     }
 
     //BELOW IS CALENDAR INFORMATION/FUNCTIONS

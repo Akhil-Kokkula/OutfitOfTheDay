@@ -45,7 +45,7 @@ dependencies {
     implementation ("com.github.PhilJay:MPAndroidChart:v3.1.0")
     implementation("com.google.firebase:firebase-database-ktx")
     implementation("com.github.bumptech.glide:glide:4.14.2")
-    annotationProcessor("com.github.bumptech.glide:compiler:4.14.2")
+    kapt("com.github.bumptech.glide:compiler:4.14.2")
     implementation("com.squareup.okhttp3:okhttp:4.9.2")
     implementation(platform("com.google.firebase:firebase-bom:32.8.0"))
     implementation("com.google.firebase:firebase-auth")
@@ -90,4 +90,7 @@ dependencies {
 
 //to easily control permissions
     implementation("pub.devrel:easypermissions:3.0.0")
+
+
+
 }
