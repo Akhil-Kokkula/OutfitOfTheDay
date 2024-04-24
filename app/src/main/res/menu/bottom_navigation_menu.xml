@@ -15,6 +15,5 @@
     <item
         android:id="@+id/navigation_wardrobe"
         android:icon="@drawable/closet_icon"
-        android:title="Wardrobe"
-  />
+        android:title="Wardrobe" />
 </menu>
