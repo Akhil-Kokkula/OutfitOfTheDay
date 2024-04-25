@@ -32,6 +32,7 @@ import com.example.outfitoftheday.Constants.REQUEST_GOOGLE_PLAY_SERVICES
 import com.example.outfitoftheday.Constants.REQUEST_PERMISSION_GET_ACCOUNTS
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
+import com.google.android.material.progressindicator.CircularProgressIndicator
 import com.google.android.material.textfield.TextInputLayout
 import com.google.api.client.extensions.android.http.AndroidHttp
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential
@@ -78,11 +79,13 @@ class GenerateOutfitFragment : Fragment() {
     private lateinit var weatherJSONObject : JSONObject
     private lateinit var hourlyWeatherJSONString : String
     private lateinit var wardrobeList : MutableList<ClothingItem>
+    private lateinit var loadingIndicator: CircularProgressIndicator
     private var latitude = 0.0
     private var longitude = 0.0
     private lateinit var weatherTextView: TextView
     private lateinit var generateOutfitButton: Button
     private val LOCATION_PERMISSION_REQUEST_CODE = 1001
+
 
 
     //Weather Variables
@@ -113,6 +116,9 @@ class GenerateOutfitFragment : Fragment() {
         calendarButton = view.findViewById(R.id.loadCalendarButton)
         occasionInputText = view.findViewById<TextInputLayout>(R.id.tilOccasion).editText!!
         durationInputText = view.findViewById<TextInputLayout>(R.id.tilDuration).editText!!
+        loadingIndicator = view.findViewById(R.id.loadingIndicator)
+        loadingIndicator.visibility = View.GONE
+
         // Initialize LocationManager
         locationManager = requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
@@ -170,6 +176,7 @@ class GenerateOutfitFragment : Fragment() {
         } else if (durationInputText.text.toString() == "" || durationInputText.text.toString().toInt() == 0) {
             Toast.makeText(context, "Please enter how long you will wear the outfit for in hours", Toast.LENGTH_SHORT).show()
         } else {
+            loadingIndicator.visibility = View.VISIBLE
             getHourlyWeatherData()
             val aiTextStrBuilder = StringBuilder()
             aiTextStrBuilder.append("You are a fashion stylist and you must give the user a full outfit for the day. ")
@@ -249,6 +256,7 @@ class GenerateOutfitFragment : Fragment() {
                     println(outfitImageUrls)
 
                     GlobalScope.launch(Dispatchers.Main) {
+                        loadingIndicator.visibility = View.GONE
                         outfitGalleryAdapter.updatingOutfitList(outfitImageUrls)
                         outfitPhotoGallery.scrollToPosition(0)
                     }
@@ -493,24 +501,29 @@ class GenerateOutfitFragment : Fragment() {
                             callback(contentText)
                         } else {
                             Log.e("Claude API", "No 'text' field found in content array")
+                            loadingIndicator.visibility = View.GONE
+                            Toast.makeText(context, "Failed to generate outfit. Please try again!", Toast.LENGTH_LONG)
                         }
                     } else {
                         Log.e("Claude API", "Empty or null content array")
+                        loadingIndicator.visibility = View.GONE
+                        Toast.makeText(context, "Failed to generate outfit. Please try again!", Toast.LENGTH_LONG)
                     }
 
                 } else {
                     Log.e("Claude API", "Error using Claude API: ${response.code} - ${response.message}")
                     val errorResponseBody = response.body?.string()
                     Log.e("Claude API", "Error Response: $errorResponseBody")
+                    loadingIndicator.visibility = View.GONE
+                    Toast.makeText(context, "Failed to generate outfit. Please try again!", Toast.LENGTH_LONG)
                 }
             } catch (e: IOException) {
                 Log.e("Claude API", "Error making API request: ${e.message}")
                 e.printStackTrace()
+                loadingIndicator.visibility = View.GONE
+                Toast.makeText(context, "Failed to generate outfit. Please try again!", Toast.LENGTH_LONG)
             }
         }
-
-
-
 
     }
 

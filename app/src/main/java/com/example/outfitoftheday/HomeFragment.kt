@@ -5,16 +5,19 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
 import com.github.mikephil.charting.formatter.PercentFormatter
+import com.google.firebase.auth.FirebaseAuth
 
 class HomeFragment : Fragment() {
 
     private lateinit var pieChart: PieChart
+    private lateinit var welcomeText : TextView
 
     // Inflate the layout for this fragment and setup the pie chart
     override fun onCreateView(
@@ -25,6 +28,15 @@ class HomeFragment : Fragment() {
         pieChart = view.findViewById(R.id.pieChart)
         setupPieChart()
         loadPieChartData()
+
+        //using user's email name before @ in greeting
+        val currUser = FirebaseAuth.getInstance().currentUser
+        println("Current user is " + currUser?.email)
+        welcomeText = view.findViewById(R.id.welcomeTextView)
+        if (currUser != null) {
+            welcomeText.text = "Welcome, " + currUser.email.toString().split('@')[0] + "!"
+        }
+
         return view
     }
 

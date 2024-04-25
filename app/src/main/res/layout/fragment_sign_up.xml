@@ -25,15 +25,18 @@ android:layout_height="match_parent"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
+        android:background="#252525"
         app:cardCornerRadius="8dp"
         app:cardElevation="4dp"
         app:layout_constraintEnd_toEndOf="@+id/guideline_end"
         app:layout_constraintStart_toStartOf="@+id/guideline_start"
-        app:layout_constraintTop_toBottomOf="@+id/tvSignUp">
+        app:layout_constraintTop_toBottomOf="@+id/tvSignUp"
+        >
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="#252525"
             android:padding="16dp">
 
             <com.google.android.material.textfield.TextInputLayout
@@ -43,12 +46,14 @@ android:layout_height="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
                 android:hint="Email"
+
                 app:layout_constraintTop_toTopOf="parent"
                 tools:layout_editor_absoluteX="16dp">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"/>
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -66,10 +71,10 @@ android:layout_height="match_parent"
                 <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="textPassword" />
+                    android:inputType="textPassword"
+                    android:textColor="@color/white"/>
 
             </com.google.android.material.textfield.TextInputLayout>
-
 
 
             <com.google.android.material.button.MaterialButton
@@ -77,8 +82,8 @@ android:layout_height="match_parent"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="32dp"
-                android:text="Create Account"
                 android:backgroundTint="#FF9800"
+                android:text="Create Account"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

@@ -34,6 +34,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="#252525"
             android:padding="16dp">
 
             <com.google.android.material.textfield.TextInputLayout
@@ -43,14 +44,12 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
                 android:hint="Email"
-                app:boxStrokeColor="#000000"
-                app:hintTextColor="#707070"
                 app:layout_constraintTop_toTopOf="parent">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="#000000" />
+                    android:textColor="@color/white" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -62,14 +61,12 @@
                 android:layout_marginTop="16dp"
                 android:hint="Password"
                 app:endIconMode="password_toggle"
-                app:boxStrokeColor="#000000"
-                app:hintTextColor="#707070"
                 app:layout_constraintTop_toBottomOf="@id/tilEmail">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="#000000"
+                    android:textColor="@color/white"
                     android:inputType="textPassword" />
 
             </com.google.android.material.textfield.TextInputLayout>
