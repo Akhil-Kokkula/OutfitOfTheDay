@@ -5,43 +5,54 @@
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
     app:cardElevation="4dp"
-    app:cardCornerRadius="8dp">
+    app:cardCornerRadius="8dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:id="@+id/cardView">
 
-    <LinearLayout
+    <FrameLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="8dp">
 
         <ImageView
             android:id="@+id/imageView"
             android:layout_width="100dp"
             android:layout_height="100dp"
+            android:visibility="visible"
             android:scaleType="centerCrop"
             tools:src="@tools:sample/avatars" />
 
-        <TextView
-            android:id="@+id/textViewLabel"
+        <LinearLayout
+            android:id="@+id/textLayout"
             android:layout_width="100dp"
             android:layout_height="wrap_content"
-            android:text="Label"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:paddingTop="8dp" />
+            android:orientation="vertical"
+            android:visibility="gone">
 
-        <TextView
-            android:id="@+id/textViewColor"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:text="Color"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:paddingTop="4dp" />
+            <TextView
+                android:id="@+id/textViewLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Label"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:paddingTop="8dp" />
 
-        <TextView
-            android:id="@+id/textViewBrand"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:text="Text"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:paddingTop="4dp" />
-    </LinearLayout>
+            <TextView
+                android:id="@+id/textViewColor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Color"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:paddingTop="4dp" />
+
+            <TextView
+                android:id="@+id/textViewBrand"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Text"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:paddingTop="4dp" />
+        </LinearLayout>
+    </FrameLayout>
 </androidx.cardview.widget.CardView>

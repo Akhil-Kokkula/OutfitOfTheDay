@@ -3,6 +3,7 @@ package com.example.outfitoftheday
 import android.graphics.BitmapFactory
 import android.util.Base64
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -33,18 +34,21 @@ class WardrobeAdapter(var items: List<ClothingItem>) :
             binding.textViewBrand.text = item.brand ?: "No Brand"
 
             if (!item.imageBase64.isNullOrEmpty()) {
-                try {
-                    val bytes = Base64.decode(item.imageBase64, Base64.DEFAULT)
-                    val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
-                    binding.imageView.setImageBitmap(bitmap)
-                } catch (e: IllegalArgumentException) {
-                    e.printStackTrace()
-                }
+                val bytes = Base64.decode(item.imageBase64, Base64.DEFAULT)
+                val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+                binding.imageView.setImageBitmap(bitmap)
             } else if (!item.imageUrl.isNullOrEmpty()) {
                 Glide.with(binding.imageView.context)
                     .load(item.imageUrl)
                     .apply(RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL))
                     .into(binding.imageView)
+            }
+
+            // Set up the click listener for the card view to toggle visibility between the image and text.
+            binding.cardView.setOnClickListener {
+                val isImageVisible = binding.imageView.visibility == View.VISIBLE
+                binding.imageView.visibility = if (isImageVisible) View.GONE else View.VISIBLE
+                binding.textLayout.visibility = if (isImageVisible) View.VISIBLE else View.GONE
             }
         }
     }
