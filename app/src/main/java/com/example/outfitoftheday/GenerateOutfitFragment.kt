@@ -175,6 +175,8 @@ class GenerateOutfitFragment : Fragment() {
             Toast.makeText(context, "Please enter your preferred event for the day", Toast.LENGTH_SHORT).show()
         } else if (durationInputText.text.toString() == "" || durationInputText.text.toString().toInt() == 0) {
             Toast.makeText(context, "Please enter how long you will wear the outfit for in hours", Toast.LENGTH_SHORT).show()
+        } else if (weatherJSONObject == null) {
+            Toast.makeText(context, "Please wait until weather information is loaded and try again", Toast.LENGTH_SHORT).show()
         } else {
             loadingIndicator.visibility = View.VISIBLE
             getHourlyWeatherData()
@@ -247,17 +249,17 @@ class GenerateOutfitFragment : Fragment() {
                         .mapNotNull { regex.find(it)?.groupValues?.get(1) }
                     println(clothingIds)
 
-                    val outfitImageUrls = mutableListOf<OutfitPhoto>()
+                    val outfitImages = mutableListOf<ClothingItem>()
                     wardrobeList.forEach { item ->
                         if (item.id in clothingIds) {
-                            outfitImageUrls.add(OutfitPhoto(item.imageBase64.toString()))
+                            outfitImages.add(item)
                         }
                     }
-                    println(outfitImageUrls)
+                    println(outfitImages)
 
                     GlobalScope.launch(Dispatchers.Main) {
                         loadingIndicator.visibility = View.GONE
-                        outfitGalleryAdapter.updatingOutfitList(outfitImageUrls)
+                        outfitGalleryAdapter.updatingOutfitList(outfitImages)
                         outfitPhotoGallery.scrollToPosition(0)
                     }
 

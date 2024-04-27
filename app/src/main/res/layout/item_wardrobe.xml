@@ -4,31 +4,33 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
-    app:cardElevation="4dp"
+    app:cardElevation="5dp"
     app:cardCornerRadius="8dp"
     android:clickable="true"
     android:focusable="true"
-    android:id="@+id/cardView">
+    android:id="@+id/cardView"
+    android:outlineSpotShadowColor="#9E9E9E">
 
     <FrameLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="8dp">
+        >
 
         <ImageView
             android:id="@+id/imageView"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_width="150dp"
+            android:layout_height="179dp"
             android:visibility="visible"
             android:scaleType="centerCrop"
             tools:src="@tools:sample/avatars" />
 
         <LinearLayout
             android:id="@+id/textLayout"
-            android:layout_width="100dp"
+            android:layout_width="150dp"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:visibility="gone">
+            android:visibility="gone"
+            android:padding="8dp">
 
             <TextView
                 android:id="@+id/textViewLabel"
@@ -36,7 +38,7 @@
                 android:layout_height="wrap_content"
                 android:text="Label"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                android:paddingTop="8dp" />
+                android:paddingTop="4dp" />
 
             <TextView
                 android:id="@+id/textViewColor"
