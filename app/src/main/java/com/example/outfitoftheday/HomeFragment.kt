@@ -2,6 +2,7 @@ package com.example.outfitoftheday
 
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,6 +19,7 @@ class HomeFragment : Fragment() {
 
     private lateinit var pieChart: PieChart
     private lateinit var welcomeText : TextView
+    private lateinit var weatherText: TextView
 
     // Inflate the layout for this fragment and setup the pie chart
     override fun onCreateView(
@@ -26,6 +28,7 @@ class HomeFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_home, container, false)
         pieChart = view.findViewById(R.id.pieChart)
+        weatherText = view.findViewById(R.id.homeWeatherNumberTextView)
         setupPieChart()
         loadPieChartData()
 
@@ -38,6 +41,32 @@ class HomeFragment : Fragment() {
         }
 
         return view
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        // Retrieve existing instance of GenerateOutfitFragment if it's already added
+        val weatherFragment = childFragmentManager.findFragmentByTag("GenerateOutfitFragment") as? GenerateOutfitFragment
+
+        // If not added, create a new instance
+        if (weatherFragment == null) {
+            val newWeatherFragment = GenerateOutfitFragment()
+            childFragmentManager.beginTransaction()
+                .add(newWeatherFragment, "GenerateOutfitFragment")
+                .commitNow()
+            newWeatherFragment.startLocationGatheringForHome() // Call startLocationGathering for the new instance
+            observeWeatherData(newWeatherFragment)
+        } else {
+            // Fragment already exists, use the existing instance
+            observeWeatherData(weatherFragment)
+        }
+    }
+
+    private fun observeWeatherData(weatherFragment: GenerateOutfitFragment) {
+        weatherFragment.weatherDataForHomePageLiveData.observe(viewLifecycleOwner) { weatherData ->
+            weatherText.text = weatherData
+        }
     }
 
     // Configures settings for the pie chart
