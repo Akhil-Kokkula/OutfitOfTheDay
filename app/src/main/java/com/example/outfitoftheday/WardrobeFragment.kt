@@ -33,8 +33,29 @@ class WardrobeFragment : Fragment() {
         auth = FirebaseAuth.getInstance()
 
         setupFirebaseDatabase()
+        setupIconClickListeners()
 
         return binding.root
+    }
+
+    private fun setupIconClickListeners() {
+        binding.iconAll.setOnClickListener { filterWardrobe("all") }
+        binding.iconHats.setOnClickListener { filterWardrobe("hats") }
+        binding.iconShirts.setOnClickListener { filterWardrobe("tops") }
+        binding.iconBottoms.setOnClickListener { filterWardrobe("bottoms") }
+        binding.iconFootwear.setOnClickListener { filterWardrobe("footwear") }
+        binding.iconMisc.setOnClickListener { filterWardrobe("miscellaneous") }
+    }
+
+    private var allItems = mutableListOf<ClothingItem>()
+
+    private fun filterWardrobe(category: String) {
+        val filteredItems = if (category == "all") {
+            allItems
+        } else {
+            allItems.filter { it.category?.equals(category, ignoreCase = true) ?: false }
+        }
+        updateUI(filteredItems)
     }
 
     private fun setupFirebaseDatabase() {
@@ -51,15 +72,15 @@ class WardrobeFragment : Fragment() {
     private fun fetchDataFromDatabase() {
         databaseReference.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val items = mutableListOf<ClothingItem>()
+                allItems.clear()
                 for (snapshot in dataSnapshot.children) {
                     val item = snapshot.getValue(ClothingItem::class.java)
                     item?.let {
                         it.id = snapshot.key
-                        items.add(it)
+                        allItems.add(it)
                     }
                 }
-                updateUI(items)
+                updateUI(allItems)  // Initial load with all items
             }
 
             override fun onCancelled(databaseError: DatabaseError) {

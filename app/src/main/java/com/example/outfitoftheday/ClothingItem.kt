@@ -9,6 +9,7 @@ data class ClothingItem(
     val label: String? = null,
     val color: String? = null,
     val brand: String? = null,
+    val category: String? = null,
     val imageBase64: String? = null,
     val imageUrl: String? = null
 )

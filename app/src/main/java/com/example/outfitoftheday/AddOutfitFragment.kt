@@ -121,6 +121,19 @@ class AddOutfitFragment : Fragment() {
         return view
     }
 
+    private fun getCategoryFromLabel(label: String): String {
+        val normalizedLabel = label.toLowerCase(Locale.ROOT).trim()
+        return when {
+            "t-shirt" in normalizedLabel || "shirt" in normalizedLabel && !("dress shirt" in normalizedLabel) -> "Tops"
+            "skirt" in normalizedLabel -> "Bottoms"
+            "pants" in normalizedLabel || "jeans" in normalizedLabel -> "Bottoms"
+            "hat" in normalizedLabel || "cap" in normalizedLabel -> "Hats"
+            "shoes" in normalizedLabel || "boots" in normalizedLabel -> "Footwear"
+            // Add more conditions as necessary
+            else -> "Miscellaneous"
+        }
+    }
+
     private fun submitOutfitData() {
         val label = editTextLabel.text.toString().trim()
         val color = editTextColor.text.toString().trim()
@@ -133,10 +146,12 @@ class AddOutfitFragment : Fragment() {
         }
 
         val imageBase64 = encodeImageToBase64(capturedImageBitmap!!)
+        val category = getCategoryFromLabel(label) // Get category based on label
         val outfit = hashMapOf(
             "label" to label,
             "color" to color,
             "brand" to brand,
+            "category" to category,  // Include the automatically determined category
             "imageBase64" to imageBase64
         )
 
@@ -149,6 +164,7 @@ class AddOutfitFragment : Fragment() {
             }
         }
     }
+
 
     private fun encodeImageToBase64(bitmap: Bitmap): String {
         val byteArrayOutputStream = ByteArrayOutputStream()
