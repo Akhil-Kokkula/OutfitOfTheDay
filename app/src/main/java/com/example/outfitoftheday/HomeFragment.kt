@@ -7,6 +7,7 @@ import android.graphics.Color
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -41,6 +42,7 @@ class HomeFragment : Fragment() {
     private var latitude: Double = 0.0
     private var longitude: Double = 0.0
     private val LOCATION_PERMISSION_REQUEST_CODE = 100
+    private lateinit var weatherText: TextView
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -49,7 +51,7 @@ class HomeFragment : Fragment() {
         pieChart = view.findViewById(R.id.pieChart)
         welcomeText = view.findViewById(R.id.welcomeTextView)
         weatherIcon = view.findViewById(R.id.weatherImageView)
-
+        weatherText = view.findViewById(R.id.homeWeatherNumberTextView)
         setupPieChart()
         loadPieChartData()
         displayUserGreeting()
@@ -57,6 +59,33 @@ class HomeFragment : Fragment() {
         return view
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        // Retrieve existing instance of GenerateOutfitFragment if it's already added
+        val weatherFragment = childFragmentManager.findFragmentByTag("GenerateOutfitFragment") as? GenerateOutfitFragment
+
+        // If not added, create a new instance
+        if (weatherFragment == null) {
+            val newWeatherFragment = GenerateOutfitFragment()
+            childFragmentManager.beginTransaction()
+                .add(newWeatherFragment, "GenerateOutfitFragment")
+                .commitNow()
+            newWeatherFragment.startLocationGatheringForHome() // Call startLocationGathering for the new instance
+            observeWeatherData(newWeatherFragment)
+        } else {
+            // Fragment already exists, use the existing instance
+            observeWeatherData(weatherFragment)
+        }
+    }
+
+    private fun observeWeatherData(weatherFragment: GenerateOutfitFragment) {
+        weatherFragment.weatherDataForHomePageLiveData.observe(viewLifecycleOwner) { weatherData ->
+            weatherText.text = weatherData
+        }
+    }
+
+    // Configures settings for the pie chart
     private fun setupPieChart() {
         pieChart.apply {
             setUsePercentValues(true)

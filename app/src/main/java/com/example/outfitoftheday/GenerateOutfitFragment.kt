@@ -22,6 +22,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -49,9 +50,11 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import okhttp3.Call
 import okhttp3.Callback
@@ -84,6 +87,9 @@ class GenerateOutfitFragment : Fragment() {
     private lateinit var weatherTextView: TextView
     private lateinit var generateOutfitButton: Button
     private val LOCATION_PERMISSION_REQUEST_CODE = 1001
+    var weatherDataForHomePage = ""
+    private val weatherDataCallbacks = mutableListOf<(String) -> Unit>()
+    val weatherDataForHomePageLiveData = MutableLiveData<String>()
 
 
 
@@ -143,13 +149,7 @@ class GenerateOutfitFragment : Fragment() {
 
 
         // Check for location permission
-        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            // Request location updates
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0f, locationListener)
-        } else {
-            //Ask user for permission and then load location
-            requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), LOCATION_PERMISSION_REQUEST_CODE)
-        }
+        //startLocationGathering()
 
         //Calendar Information Below:
         mProgress = ProgressDialog(requireContext())
@@ -157,6 +157,37 @@ class GenerateOutfitFragment : Fragment() {
         initCredentials()
 
         return view
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        startLocationGathering()
+    }
+
+
+    private fun startLocationGathering() {
+        locationManager = requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            // Request location updates
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0f, locationListener)
+        } else {
+            //Ask user for permission and then load location
+            requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), LOCATION_PERMISSION_REQUEST_CODE)
+        }
+    }
+
+    fun startLocationGatheringForHome() {
+        locationManager = requireContext().getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        // Simulate gathering weather data asynchronously
+        CoroutineScope(Dispatchers.Main).launch {
+            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                // Request location updates
+                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0f, locationListener)
+            } else {
+                //Ask user for permission and then load location
+                requestPermissions(arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), LOCATION_PERMISSION_REQUEST_CODE)
+            }
+        }
     }
 
     private fun setupFirebaseDatabase() {
@@ -174,6 +205,8 @@ class GenerateOutfitFragment : Fragment() {
             Toast.makeText(context, "Please enter your preferred event for the day", Toast.LENGTH_SHORT).show()
         } else if (durationInputText.text.toString() == "" || durationInputText.text.toString().toInt() == 0) {
             Toast.makeText(context, "Please enter how long you will wear the outfit for in hours", Toast.LENGTH_SHORT).show()
+        } else if (weatherJSONObject == null) {
+            Toast.makeText(context, "Please wait until weather information is loaded and try again", Toast.LENGTH_SHORT).show()
         } else {
             loadingIndicator.visibility = View.VISIBLE
             getHourlyWeatherData()
@@ -246,17 +279,17 @@ class GenerateOutfitFragment : Fragment() {
                         .mapNotNull { regex.find(it)?.groupValues?.get(1) }
                     println(clothingIds)
 
-                    val outfitImageUrls = mutableListOf<OutfitPhoto>()
+                    val outfitImages = mutableListOf<ClothingItem>()
                     wardrobeList.forEach { item ->
                         if (item.id in clothingIds) {
-                            outfitImageUrls.add(OutfitPhoto(item.imageBase64.toString()))
+                            outfitImages.add(item)
                         }
                     }
-                    println(outfitImageUrls)
+                    //println(outfitImages)
 
                     GlobalScope.launch(Dispatchers.Main) {
                         loadingIndicator.visibility = View.GONE
-                        outfitGalleryAdapter.updatingOutfitList(outfitImageUrls)
+                        outfitGalleryAdapter.updatingOutfitList(outfitImages)
                         outfitPhotoGallery.scrollToPosition(0)
                     }
 
@@ -393,7 +426,9 @@ class GenerateOutfitFragment : Fragment() {
                         //Need to use this to update UI in a run()
                         requireActivity().runOnUiThread {
                             if (isAdded) {
-                                //weatherTextView.text= "Today's Weather Information:" + "\n" + "Temperature (F): " + "%.2f".format(weatherTemp) + "\n" + "Precipitation Probability: " + weatherPrecipitationProbability.toString() + "%\n" + "Humidity Percentage: " + weatherHumidity.toString() + "%"
+                                weatherDataForHomePage = "Temperature (F): " + "%.2f".format(weatherTemp) + "\n" + "Precipitation Probability: " + weatherPrecipitationProbability.toString() + "%\n" + "Humidity Percentage: " + weatherHumidity.toString() + "%"
+                                weatherDataForHomePageLiveData.value = weatherDataForHomePage
+                                Log.d("Weather", weatherDataForHomePage)
                                 weatherTextView.text = "Weather Information Added!"
                             }
                             // Your UI update code here
