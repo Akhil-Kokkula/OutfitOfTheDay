@@ -53,7 +53,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.MediaType.Companion.toMediaType
@@ -442,7 +441,7 @@ class GenerateOutfitFragment : Fragment() {
     }
 
     private fun sendAndReceiveMessageFromClaude(userMsg: String, callback: (String) -> Unit){
-        val ANTHROPIC_API_KEY = ""
+        val ANTHROPIC_API_KEY = "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"
         val url = "https://api.anthropic.com/v1/messages"
         val headers = mapOf(
             "x-api-key" to ANTHROPIC_API_KEY,
