@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -25,6 +26,8 @@ class WardrobeFragment : Fragment() {
     private lateinit var auth: FirebaseAuth
     private lateinit var databaseReference: DatabaseReference
 
+    private var allItems = mutableListOf<ClothingItem>()
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentWardrobeBinding.inflate(inflater, container, false)
@@ -34,28 +37,9 @@ class WardrobeFragment : Fragment() {
 
         setupFirebaseDatabase()
         setupIconClickListeners()
+        setupSearchView()
 
         return binding.root
-    }
-
-    private fun setupIconClickListeners() {
-        binding.iconAll.setOnClickListener { filterWardrobe("all") }
-        binding.iconHats.setOnClickListener { filterWardrobe("hats") }
-        binding.iconShirts.setOnClickListener { filterWardrobe("tops") }
-        binding.iconBottoms.setOnClickListener { filterWardrobe("bottoms") }
-        binding.iconFootwear.setOnClickListener { filterWardrobe("footwear") }
-        binding.iconMisc.setOnClickListener { filterWardrobe("miscellaneous") }
-    }
-
-    private var allItems = mutableListOf<ClothingItem>()
-
-    private fun filterWardrobe(category: String) {
-        val filteredItems = if (category == "all") {
-            allItems
-        } else {
-            allItems.filter { it.category?.equals(category, ignoreCase = true) ?: false }
-        }
-        updateUI(filteredItems)
     }
 
     private fun setupFirebaseDatabase() {
@@ -87,6 +71,50 @@ class WardrobeFragment : Fragment() {
                 Log.e("WardrobeFragment", "Failed to read wardrobe data", databaseError.toException())
             }
         })
+    }
+
+    private fun setupIconClickListeners() {
+        binding.iconAll.setOnClickListener { filterWardrobe("all") }
+        binding.iconHats.setOnClickListener { filterWardrobe("hats") }
+        binding.iconShirts.setOnClickListener { filterWardrobe("tops") }
+        binding.iconBottoms.setOnClickListener { filterWardrobe("bottoms") }
+        binding.iconFootwear.setOnClickListener { filterWardrobe("footwear") }
+        binding.iconMisc.setOnClickListener { filterWardrobe("miscellaneous") }
+    }
+
+    private fun filterWardrobe(category: String) {
+        val filteredItems = if (category == "all") {
+            allItems
+        } else {
+            allItems.filter { it.category?.equals(category, ignoreCase = true) ?: false }
+        }
+        updateUI(filteredItems)
+    }
+
+    private fun setupSearchView() {
+        binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return false // Let the SearchView handle the default behavior of the query text submission
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                filterWardrobeBySearch(newText)
+                return true
+            }
+        })
+    }
+
+    private fun filterWardrobeBySearch(query: String?) {
+        val filteredList = if (!query.isNullOrEmpty()) {
+            allItems.filter {
+                it.label?.contains(query, ignoreCase = true) == true ||
+                        it.color?.contains(query, ignoreCase = true) == true ||
+                        it.brand?.contains(query, ignoreCase = true) == true
+            }
+        } else {
+            allItems // Return all items if search query is empty
+        }
+        updateUI(filteredList)
     }
 
     private fun updateUI(items: List<ClothingItem>) {
