@@ -424,14 +424,12 @@ class GenerateOutfitFragment : Fragment() {
                         weatherTemp = (weatherTemp * 9/5) + 32
 
                         //Need to use this to update UI in a run()
-                        requireActivity().runOnUiThread {
+                        weatherTextView.post {
                             if (isAdded) {
-                                weatherDataForHomePage = "Temperature (F): " + "%.2f".format(weatherTemp) + "\n" + "Precipitation Probability: " + weatherPrecipitationProbability.toString() + "%\n" + "Humidity Percentage: " + weatherHumidity.toString() + "%"
                                 weatherDataForHomePageLiveData.value = weatherDataForHomePage
                                 Log.d("Weather", weatherDataForHomePage)
                                 weatherTextView.text = "Weather Information Added!"
                             }
-                            // Your UI update code here
                         }
                     }
                 }
@@ -476,7 +474,7 @@ class GenerateOutfitFragment : Fragment() {
     }
 
     private fun sendAndReceiveMessageFromClaude(userMsg: String, callback: (String) -> Unit){
-        val ANTHROPIC_API_KEY = "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"
+        val ANTHROPIC_API_KEY = ""
         val url = "https://api.anthropic.com/v1/messages"
         val headers = mapOf(
             "x-api-key" to ANTHROPIC_API_KEY,

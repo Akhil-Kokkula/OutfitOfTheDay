@@ -151,8 +151,6 @@ class HomeFragment : Fragment() {
                             updateWeatherIcon(weatherCode, isDaytime)
 
                             // Handle UI update
-                            requireActivity().runOnUiThread {
-                            }
                         }
                     }
                 }
