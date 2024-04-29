@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">OutfitOfTheDay</string>
+    <!-- Strings related to login -->
+    <string name="prompt_email">メール</string>
+    <string name="prompt_password">パスワード</string>
+    <string name="action_sign_in">サインイ/レジスター</string>
+    <string name="action_sign_in_short">サインイン</string>
+    <string name="welcome">いらっしゃいませ！</string>
+    <string name="invalid_username">有効なユーザー名ではありません</string>
+    <string name="invalid_password">パスワードは5文字以上である必要があります</string>
+    <string name="login_failed">ログインに失敗しました</string>
+    <string name="login">ログイン</string>
+    <string name="loginEmail">メール</string>
+    <string name="loginPassword">パスワード</string>
+    <string name="login_LogIn">ログイン</string>
+    <string name="login_or">または</string>
+    <string name="login_SignUpHere">ここからサインアップしてください</string>
+    <string name="AppNameHeader">今日の衣装</string>
+    <string name="addClothes_Label">ラベル (T シャツ、スカートなど)</string>
+    <string name="addClothes_Color">色 (例: 青、赤)</string>
+    <string name="addClothes_BrandText">ブランド/テキスト (例: Nike、「Just do it」)</string>
+    <string name="addClothes_buttonText">ワードローブに追加</string>
+    <string name="genOutfit_weather">今日の天気:\n読み込み中</string>
+    <string name="genOutfit_button1">カレンダーをロードする</string>
+    <string name="genOutfit_button2">衣装の生成</string>
+    <string name="home_welcome">ようこそ、ユーザーさん！</string>
+    <string name="home_statsText">最も一般的な機会:</string>
+    <string name="signUp_Create">アカウントを作成する</string>
+    <string name="signUp_logInButton">ここでログイン</string>
+    <string name="wardrobe_search">服を検索...</string>
+    <string name="clothing_category_all">全て</string>
+    <string name="clothing_category_hats">帽子</string>
+    <string name="clothing_category_tops">トップス</string>
+    <string name="clothing_category_Bottoms">ボトムス</string>
+    <string name="clothing_category_footwear">履物</string>
+    <string name="clothing_category_misc">その他</string>
+    <string name="navbar_Home">家</string>
+    <string name="navbar_addClothes">服を追加する</string>
+    <string name="navbar_generate">衣装の生成</string>
+    <string name="navbar_wardrobe">ワードローブ</string>
+    <string name="addClothesFail">画像のキャプチャに失敗しました!</string>
+    <string name="addClothesCameraUnavailable">カメラが使用できません。</string>
+    <string name="addClothesAllInputsNeeded">すべてのフィールドに入力して画像をキャプチャしてください</string>
+    <string name="addClothesSuccess">衣装が正常に追加されました</string>
+    <string name="addClothesFailToAdd">衣装の追加に失敗しました</string>
+    <string name="loading">読み込み中...</string>
+    <string name="generateOutfitEventFail">当日のご希望のイベントをご入力ください</string>
+    <string name="generateOutfitEventDurationFail">衣装を着用する時間を時間単位で入力してください</string>
+    <string name="generateOutfitWeatherFail">気象情報が読み込まれるまで待ってから、もう一度お試しください。</string>
+    <string name="locationPermFail">位置情報の許可が拒否されました</string>
+    <string name="weatherAdded">気象情報を追加しました！</string>
+    <string name="needAccesstoGoogle">このアプリは（連絡先経由で）Google アカウントにアクセスする必要があります。</string>
+    <string name="clickAgainForCalendar">もう一度クリックしてカレンダーをロードしてください。</string>
+    <string name="calendarAdded">カレンダー追加しました！</string>
+    <string name="pieChartCategory_casual">カジュアル</string>
+    <string name="pieChartCategory_formal">フォーマル</string>
+    <string name="pieChartCategory_sport">スポーツ</string>
+    <string name="pieChartCategory_others">その他</string>
+    <string name="pieChartCategory_welcomeWord">いらっしゃいませ</string>
+    <string name="failed_Login">ログインできませんでした。もう一度試してください。</string>
+    <string name="signUp_incomplete">どのフィールドも空のままにしないでください</string>
+    <string name="signUp_accountCreationFail">アカウントの作成に失敗しました。もう一度試してください。</string>
+    <string name="generateOutfitImportantEvent">今日の最も重要なイベント</string>
+    <string name="generateOutfitEventDuration">屋外滞在時間（時間）</string>
+    <string-array name="clothing_categories">
+        <item>All</item>
+        <item>Hats</item>
+        <item>Tops</item>
+        <item>Bottoms</item>
+        <item>Footwear</item>
+        <item>Miscellaneous</item>
+    </string-array>
+
+</resources>
