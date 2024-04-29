@@ -69,10 +69,10 @@ class HomeFragment : Fragment() {
 
     private fun loadPieChartData() {
         val entries = ArrayList<PieEntry>().apply {
-            add(PieEntry(40f, "Casual"))
-            add(PieEntry(30f, "Formal"))
-            add(PieEntry(15f, "Sport"))
-            add(PieEntry(15f, "Others"))
+            add(PieEntry(40f, getString(R.string.pieChartCategory_casual)))
+            add(PieEntry(30f, getString(R.string.pieChartCategory_formal)))
+            add(PieEntry(15f, getString(R.string.pieChartCategory_sport)))
+            add(PieEntry(15f, getString(R.string.pieChartCategory_others)))
         }
 
         val dataSet = PieDataSet(entries, "").apply {
@@ -95,7 +95,7 @@ class HomeFragment : Fragment() {
 
     private fun displayUserGreeting() {
         val currUser = FirebaseAuth.getInstance().currentUser
-        welcomeText.text = "Welcome, ${currUser?.email?.split('@')?.first()}!"
+        welcomeText.text = getString(R.string.pieChartCategory_welcomeWord) + ", ${currUser?.email?.split('@')?.first()}!"
     }
 
     private fun setupLocationManager() {

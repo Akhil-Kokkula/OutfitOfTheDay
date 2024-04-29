@@ -59,7 +59,7 @@ class SignUpFragment : Fragment() {
         val password = passwordInputField.text.toString().trim()
 
         if (email == "" || password == "") {
-            Toast.makeText(getContext(), "Please don't leave any field empty", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), getString(R.string.signUp_incomplete), Toast.LENGTH_SHORT).show();
             println("could not create new user account since fields were empty")
             return
         }
@@ -70,7 +70,7 @@ class SignUpFragment : Fragment() {
                     Log.d(TAG, "successfully created new user account")
                     goToLoginFragment()
                 } else {
-                    Toast.makeText(getContext(), "Account creation failed. Please try again.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(),getString(R.string.signUp_accountCreationFail) , Toast.LENGTH_SHORT).show();
                     Log.e(TAG, "could not create new user account due to ", task.exception)
                 }
             }

@@ -59,7 +59,7 @@ class LoginFragment : Fragment() {
                     Log.d(TAG, "successfully logged in user")
                     goToHomeFragment()
                 } else {
-                    Toast.makeText(getContext(), "Could not login. Please try again.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(getContext(), getString(R.string.failed_Login), Toast.LENGTH_SHORT).show()
                     Log.e(TAG, "could not log in user", task.exception)
                 }
             }

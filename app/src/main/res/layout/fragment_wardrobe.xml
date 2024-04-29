@@ -20,7 +20,7 @@
             android:id="@+id/outfitOfTheDayLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Outfit of the Day"
+            android:text="@string/AppNameHeader"
             android:textSize="20sp"
             android:textStyle="bold"
             android:textColor="#FFFFFF"
@@ -34,7 +34,7 @@
         android:layout_marginTop="8dp"
         android:background="@android:color/white"
         app:iconifiedByDefault="false"
-        app:queryHint="Search clothes..."
+        app:queryHint="@string/wardrobe_search"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/outfitOfTheDayContainer"
@@ -75,7 +75,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="All"
+                    android:text="@string/clothing_category_all"
                     android:textColor="#FFFFFF"
                     android:textSize="12sp" />
             </LinearLayout>
@@ -101,7 +101,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Hats"
+                    android:text="@string/clothing_category_hats"
                     android:textColor="#FFFFFF"
                     android:textSize="12sp" />
             </LinearLayout>
@@ -127,7 +127,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Tops"
+                    android:text="@string/clothing_category_tops"
                     android:textColor="#FFFFFF"
                     android:textSize="12sp" />
             </LinearLayout>
@@ -153,7 +153,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Bottoms"
+                    android:text="@string/clothing_category_Bottoms"
                     android:textColor="#FFFFFF"
                     android:textSize="12sp" />
             </LinearLayout>
@@ -179,7 +179,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Footwear"
+                    android:text="@string/clothing_category_footwear"
                     android:textColor="#FFFFFF"
                     android:textSize="12sp" />
             </LinearLayout>
@@ -205,7 +205,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Misc"
+                    android:text="@string/clothing_category_misc"
                     android:textColor="#FFFFFF"
                     android:textSize="12sp" />
             </LinearLayout>

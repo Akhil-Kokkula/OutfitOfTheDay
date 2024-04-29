@@ -95,7 +95,7 @@ class GenerateOutfitFragment : Fragment() {
 
     //Weather Variables
     private val client = OkHttpClient()
-    private val locationAPIKEY = "O4YfE6O0SCM3xZvGwTbrlqaT0xyGm6ZU"
+    private val locationAPIKEY = "1Ne2e9X6qm2oSfbZ0lxvutPUvD6kyMGf"
     private var weatherTemp = 0.0
     private var weatherPrecipitationProbability = 0.0
     private var weatherHumidity = 0.0
@@ -153,7 +153,7 @@ class GenerateOutfitFragment : Fragment() {
 
         //Calendar Information Below:
         mProgress = ProgressDialog(requireContext())
-        mProgress!!.setMessage("Loading...")
+        mProgress!!.setMessage(getString(R.string.loading))
         initCredentials()
 
         return view
@@ -202,11 +202,11 @@ class GenerateOutfitFragment : Fragment() {
 
     private fun generateOutfitAction() {
         if (occasionInputText.text.toString() == "") {
-            Toast.makeText(context, "Please enter your preferred event for the day", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, getString(R.string.generateOutfitEventFail), Toast.LENGTH_SHORT).show()
         } else if (durationInputText.text.toString() == "" || durationInputText.text.toString().toInt() == 0) {
-            Toast.makeText(context, "Please enter how long you will wear the outfit for in hours", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context,  getString(R.string.generateOutfitEventDurationFail) , Toast.LENGTH_SHORT).show()
         } else if (weatherJSONObject == null) {
-            Toast.makeText(context, "Please wait until weather information is loaded and try again", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, getString(R.string.generateOutfitWeatherFail) , Toast.LENGTH_SHORT).show()
         } else {
             loadingIndicator.visibility = View.VISIBLE
             getHourlyWeatherData()
@@ -380,7 +380,7 @@ class GenerateOutfitFragment : Fragment() {
                     }
                 } else {
                     // Permission is denied, handle accordingly (e.g., display a message to the user)
-                    Toast.makeText(requireContext(), "Location permission denied", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), getString(R.string.locationPermFail) , Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -428,7 +428,7 @@ class GenerateOutfitFragment : Fragment() {
                             if (isAdded) {
                                 weatherDataForHomePageLiveData.value = weatherDataForHomePage
                                 Log.d("Weather", weatherDataForHomePage)
-                                weatherTextView.text = "Weather Information Added!"
+                                weatherTextView.text = getString(R.string.weatherAdded)
                             }
                         }
                     }
@@ -534,12 +534,12 @@ class GenerateOutfitFragment : Fragment() {
                         } else {
                             Log.e("Claude API", "No 'text' field found in content array")
                             loadingIndicator.visibility = View.GONE
-                            Toast.makeText(context, "Failed to generate outfit. Please try again!", Toast.LENGTH_LONG)
+                            //Toast.makeText(context, "Failed to generate outfit. Please try again!", Toast.LENGTH_LONG)
                         }
                     } else {
                         Log.e("Claude API", "Empty or null content array")
                         loadingIndicator.visibility = View.GONE
-                        Toast.makeText(context, "Failed to generate outfit. Please try again!", Toast.LENGTH_LONG)
+                        //Toast.makeText(context, "Failed to generate outfit. Please try again!", Toast.LENGTH_LONG)
                     }
 
                 } else {
@@ -547,13 +547,13 @@ class GenerateOutfitFragment : Fragment() {
                     val errorResponseBody = response.body?.string()
                     Log.e("Claude API", "Error Response: $errorResponseBody")
                     loadingIndicator.visibility = View.GONE
-                    Toast.makeText(context, "Failed to generate outfit. Please try again!", Toast.LENGTH_LONG)
+                    //Toast.makeText(context, "Failed to generate outfit. Please try again!", Toast.LENGTH_LONG)
                 }
             } catch (e: IOException) {
                 Log.e("Claude API", "Error making API request: ${e.message}")
                 e.printStackTrace()
                 loadingIndicator.visibility = View.GONE
-                Toast.makeText(context, "Failed to generate outfit. Please try again!", Toast.LENGTH_LONG)
+                //Toast.makeText(context, "Failed to generate outfit. Please try again!", Toast.LENGTH_LONG)
             }
         }
 
@@ -647,11 +647,11 @@ class GenerateOutfitFragment : Fragment() {
             Log.d("Test", "We enter this")
             EasyPermissions.requestPermissions(
                 this,
-                "This app needs to access your Google account (via Contacts).",
+                getString(R.string.needAccesstoGoogle),
                 REQUEST_PERMISSION_GET_ACCOUNTS,
                 Manifest.permission.GET_ACCOUNTS
             )
-            calendarButton.text = "Click again to load calendar!"
+            calendarButton.text = getString(R.string.clickAgainForCalendar)
         }
     }
 
@@ -707,12 +707,13 @@ class GenerateOutfitFragment : Fragment() {
                 mProgress!!.hide()
                 if (output == null || output.size == 0) {
                     Log.d("Google", "No Calendar Information")
+                    calendarButton.isEnabled = false
                 } else {
                     for (index in 0 until output.size) {
                         stringOfEvents = stringOfEvents +  output[index].summary + "\n"
                     }
                     Log.d("Google", "These are your events for the day: \n$stringOfEvents")
-                    calendarButton.text = "Calendar Added!"
+                    calendarButton.text = getString(R.string.calendarAdded)
                     calendarButton.isEnabled = false
                 }
             },

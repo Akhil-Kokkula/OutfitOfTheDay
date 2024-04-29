@@ -90,7 +90,7 @@ class AddOutfitFragment : Fragment() {
                     capturedImageBitmap = it
                     imageView.setImageBitmap(it)
                     analyzeImage(imageBitmap)
-                } ?: Toast.makeText(requireContext(), "Failed to capture image!", Toast.LENGTH_SHORT).show()
+                } ?: Toast.makeText(requireContext(), getString(R.string.addClothesFail), Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -114,7 +114,7 @@ class AddOutfitFragment : Fragment() {
             try {
                 takePictureLauncher.launch(takePictureIntent)
             } catch (e: Exception) {
-                Toast.makeText(requireContext(), "Camera not available.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), getString(R.string.addClothesCameraUnavailable), Toast.LENGTH_SHORT).show()
             }
         }
 
@@ -141,7 +141,7 @@ class AddOutfitFragment : Fragment() {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
 
         if (label.isEmpty() || color.isEmpty() || brand.isEmpty() || capturedImageBitmap == null) {
-            Toast.makeText(context, "Please fill in all fields and capture an image", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, getString(R.string.addClothesAllInputsNeeded), Toast.LENGTH_SHORT).show()
             return
         }
 
@@ -158,9 +158,9 @@ class AddOutfitFragment : Fragment() {
         val databaseReference = FirebaseDatabase.getInstance().getReference("users/$userId/outfits")
         databaseReference.push().setValue(outfit).addOnCompleteListener { task ->
             if (task.isSuccessful) {
-                Toast.makeText(context, "Outfit added successfully", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, getString(R.string.addClothesSuccess), Toast.LENGTH_SHORT).show()
             } else {
-                Toast.makeText(context, "Failed to add outfit", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, getString(R.string.addClothesFailToAdd), Toast.LENGTH_SHORT).show()
             }
         }
     }

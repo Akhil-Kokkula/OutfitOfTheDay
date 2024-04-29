@@ -11,7 +11,7 @@
         android:id="@+id/tvLogin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Login"
+        android:text="@string/login"
         android:textStyle="bold"
         android:textColor="#FFFFFF"
         android:textAppearance="?attr/textAppearanceHeadlineMedium"
@@ -43,7 +43,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                android:hint="Email"
+                android:hint="@string/loginEmail"
                 app:layout_constraintTop_toTopOf="parent">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -59,7 +59,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:hint="Password"
+                android:hint="@string/loginPassword"
                 app:endIconMode="password_toggle"
                 app:layout_constraintTop_toBottomOf="@id/tilEmail">
 
@@ -76,7 +76,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="Log In"
+                android:text="@string/login_LogIn"
                 android:textColor="#FFFFFF"
                 android:backgroundTint="#FF9800"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -95,7 +95,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
-        android:text="or"
+        android:text="@string/login_or"
         android:textSize="20sp"
         android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
@@ -106,7 +106,7 @@
         android:id="@+id/btnSignUp"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Sign Up Here"
+        android:text="@string/login_SignUpHere"
         android:backgroundTint="#FDB74F"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/guideline_end"

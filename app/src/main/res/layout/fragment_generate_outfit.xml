@@ -11,19 +11,40 @@
         android:layout_height="wrap_content"
     android:background="#252525">
 
-    <TextView
-        android:id="@+id/weatherTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:gravity="center"
-        android:padding="16dp"
-        android:text="Today's Weather Information:\nLoading"
-        android:textColor="#FFFFFF"
-        android:textSize="20sp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        <FrameLayout
+            android:id="@+id/outfitOfTheDayContainer"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="#000000"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/outfitOfTheDayLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/AppNameHeader"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="#FFFFFF"
+                android:layout_gravity="center"/>
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/weatherTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:gravity="center"
+            android:padding="16dp"
+            android:text="@string/genOutfit_weather"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/outfitOfTheDayContainer" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/tilOccasion"
@@ -100,7 +121,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:padding="10dp"
-            android:text="Load Calendar"
+            android:text="@string/genOutfit_button1"
             android:textColor="#FFFFFF"
             app:backgroundTint="#FDB74F"
             app:layout_constraintEnd_toEndOf="parent"
@@ -113,7 +134,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
             android:padding="10dp"
-            android:text="Generate Outfit"
+            android:text="@string/genOutfit_button2"
             android:textColor="#FFFFFF"
             app:backgroundTint="#FDB74F"
             app:layout_constraintBottom_toBottomOf="parent"
