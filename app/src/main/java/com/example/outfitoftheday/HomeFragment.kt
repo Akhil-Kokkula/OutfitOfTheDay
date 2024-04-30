@@ -7,6 +7,7 @@ import android.graphics.Color
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,6 +22,10 @@ import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
 import com.github.mikephil.charting.formatter.PercentFormatter
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.OkHttpClient
@@ -68,30 +73,60 @@ class HomeFragment : Fragment() {
     }
 
     private fun loadPieChartData() {
-        val entries = ArrayList<PieEntry>().apply {
-            add(PieEntry(40f, getString(R.string.pieChartCategory_casual)))
-            add(PieEntry(30f, getString(R.string.pieChartCategory_formal)))
-            add(PieEntry(15f, getString(R.string.pieChartCategory_sport)))
-            add(PieEntry(15f, getString(R.string.pieChartCategory_others)))
-        }
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        val databaseReference = FirebaseDatabase.getInstance().getReference("users/$userId/outfits")
+        databaseReference.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val categoryMap = HashMap<String, Float>()
 
-        val dataSet = PieDataSet(entries, "").apply {
-            colors = listOf(
-                Color.parseColor("#FFD700"),
-                Color.parseColor("#C5B358"),
-                Color.parseColor("#FFDF00"),
-                Color.parseColor("#D4AF37")
-            )
-            valueTextColor = Color.WHITE
-            valueTextSize = 12f
-            setDrawValues(true)
-        }
+                for (outfitSnapshot in snapshot.children) {
+                    val category = outfitSnapshot.child("category").getValue(String::class.java)
+                    if (category != null) {
+                        categoryMap[category] = categoryMap.getOrDefault(category, 0f) + 1
+                    }
+                }
 
-        pieChart.data = PieData(dataSet).apply {
-            setValueFormatter(PercentFormatter(pieChart))
-        }
-        pieChart.invalidate()
+                // Log each category and its count for debugging
+                categoryMap.forEach { (category, count) ->
+                    Log.d("PieChartData", "Category: $category, Count: $count")
+                }
+
+                val entries = ArrayList<PieEntry>()
+                for (entry in categoryMap.entries) {
+                    entries.add(PieEntry(entry.value, entry.key))
+                }
+
+                if (entries.isNotEmpty()) {
+                    val dataSet = PieDataSet(entries, "").apply {
+                        colors = listOf(
+                            Color.parseColor("#FFD700"),
+                            Color.parseColor("#C5B358"),
+                            Color.parseColor("#FFDF00"),
+                            Color.parseColor("#D4AF37")
+                        )
+                        valueTextColor = Color.WHITE
+                        valueTextSize = 16f
+                        setDrawValues(true)
+                    }
+
+                    pieChart.data = PieData(dataSet).apply {
+                        setValueFormatter(PercentFormatter(pieChart))
+                    }
+                    pieChart.invalidate()
+                } else {
+                    Log.d("PieChartData", "No categories to display.")
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.e("loadPieChartData", "Error loading data", error.toException())
+            }
+        })
     }
+
+
+
+
 
     private fun displayUserGreeting() {
         val currUser = FirebaseAuth.getInstance().currentUser
