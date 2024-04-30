@@ -124,11 +124,11 @@ class AddOutfitFragment : Fragment() {
     private fun getCategoryFromLabel(label: String): String {
         val normalizedLabel = label.toLowerCase(Locale.ROOT).trim()
         return when {
-            "t-shirt" in normalizedLabel || "shirt" in normalizedLabel && !("dress shirt" in normalizedLabel) -> "Tops"
-            "skirt" in normalizedLabel -> "Bottoms"
-            "pants" in normalizedLabel || "jeans" in normalizedLabel -> "Bottoms"
+            "t-shirt" in normalizedLabel || "shirt" in normalizedLabel || "blouse" in normalizedLabel || "jacket" in normalizedLabel || "coat" in normalizedLabel || "hoodie" in normalizedLabel || "cardigan" in normalizedLabel || "blazer" in normalizedLabel -> "Tops"
+            "skirt" in normalizedLabel || "shorts" in normalizedLabel || "leggings" in normalizedLabel -> "Bottoms"
+            "pant" in normalizedLabel || "jeans" in normalizedLabel -> "Bottoms"
             "hat" in normalizedLabel || "cap" in normalizedLabel -> "Hats"
-            "shoes" in normalizedLabel || "boots" in normalizedLabel -> "Footwear"
+            "shoes" in normalizedLabel || "boots" in normalizedLabel || "sandals" in normalizedLabel || "high heels" in normalizedLabel || "loafers" in normalizedLabel-> "Footwear"
             // Add more conditions as necessary
             else -> "Miscellaneous"
         }
