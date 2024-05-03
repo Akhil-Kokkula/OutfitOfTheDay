@@ -4,6 +4,7 @@ import VisionModel
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Base64
@@ -19,6 +20,7 @@ import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
+import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.gson.GsonBuilder
@@ -105,8 +107,40 @@ class AddOutfitFragment : Fragment() {
         editTextBrand = view.findViewById(R.id.editTextBrand)
         buttonSubmit = view.findViewById(R.id.buttonAddToWardrobe)
 
-        buttonSubmit.setOnClickListener {
-            submitOutfitData()
+        arguments?.let {
+            val itemId = it.getString("item_id")
+            if (itemId != null) {
+                // Set up the fragment in modify mode
+                editTextLabel.setText(it.getString("label"))
+                editTextColor.setText(it.getString("color"))
+                editTextBrand.setText(it.getString("brand"))
+                // Load the image if available
+                it.getString("imageBase64")?.let { base64 ->
+                    val imageBytes = Base64.decode(base64, Base64.DEFAULT)
+                    val decodedImage = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+                    imageView.setImageBitmap(decodedImage)
+                    capturedImageBitmap = decodedImage
+                } ?: it.getString("imageUrl")?.let { imageUrl ->
+                    Glide.with(this).load(imageUrl).into(imageView)
+                }
+
+                buttonSubmit.text = "Modify Clothing Item"
+                buttonSubmit.setOnClickListener {
+                    modifyOutfitData(itemId)
+                }
+            } else {
+                // Set up the fragment in add mode
+                buttonSubmit.text = "Add to Wardrobe"
+                buttonSubmit.setOnClickListener {
+                    submitOutfitData()
+                }
+            }
+        } ?: run {
+            // Default to add mode if no arguments are passed
+            buttonSubmit.text = "Add to Wardrobe"
+            buttonSubmit.setOnClickListener {
+                submitOutfitData()
+            }
         }
 
         buttonCapture.setOnClickListener {
@@ -119,6 +153,49 @@ class AddOutfitFragment : Fragment() {
         }
 
         return view
+    }
+
+    private fun modifyOutfitData(itemId: String) {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
+        if (userId == null) {
+            Toast.makeText(context, "User not logged in", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        // Extract data from input fields
+        val label = editTextLabel.text.toString().trim()
+        val color = editTextColor.text.toString().trim()
+        val brand = editTextBrand.text.toString().trim()
+
+        if (label.isEmpty() || color.isEmpty() || brand.isEmpty() || capturedImageBitmap == null) {
+            Toast.makeText(context, "Please fill all fields and capture an image.", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val imageBase64 = encodeImageToBase64(capturedImageBitmap!!)
+        val category = getCategoryFromLabel(label)
+
+        // Create a map of data to update
+        val outfitUpdates = mapOf(
+            "label" to label,
+            "color" to color,
+            "brand" to brand,
+            "category" to category,
+            "imageBase64" to imageBase64
+        )
+
+        // Reference to the specific outfit item in Firebase
+        val outfitRef = FirebaseDatabase.getInstance().getReference("users/$userId/outfits/$itemId")
+
+        // Update the data in Firebase
+        outfitRef.updateChildren(outfitUpdates).addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                Toast.makeText(context, "Outfit updated successfully!", Toast.LENGTH_SHORT).show()
+                // Optionally navigate back or clear the form
+            } else {
+                Toast.makeText(context, "Failed to update outfit.", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     private fun getCategoryFromLabel(label: String): String {

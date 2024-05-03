@@ -14,7 +14,7 @@ import com.example.outfitoftheday.databinding.ItemWardrobeBinding
 
 class WardrobeAdapter(
     var items: MutableList<ClothingItem>,
-    private val onItemLongClicked: (ClothingItem) -> Unit
+    private val onItemLongClicked: (ClothingItem, String) -> Unit
 ) : RecyclerView.Adapter<WardrobeAdapter.WardrobeViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WardrobeViewHolder {
@@ -25,20 +25,28 @@ class WardrobeAdapter(
     override fun onBindViewHolder(holder: WardrobeViewHolder, position: Int) {
         val item = items[position]
         holder.bind(item)
-        // Long press listener for delete confirmation
+
+        // Long press listener to show options dialog
         holder.itemView.setOnLongClickListener {
-            onItemLongClicked(item)
+            showOptionsDialog(holder.itemView.context, item)
             true
-        }
-        // Click listener for toggling visibility
-        holder.binding.cardView.setOnClickListener {
-            val isImageVisible = holder.binding.imageView.visibility == View.VISIBLE
-            holder.binding.imageView.visibility = if (isImageVisible) View.GONE else View.VISIBLE
-            holder.binding.textLayout.visibility = if (isImageVisible) View.VISIBLE else View.GONE
         }
     }
 
     override fun getItemCount(): Int = items.size
+
+    private fun showOptionsDialog(context: android.content.Context, item: ClothingItem) {
+        val options = arrayOf<CharSequence>("Delete Clothing Item", "Clothing Item")
+        AlertDialog.Builder(context)
+            .setTitle("What would you like to do?")
+            .setItems(options) { dialog, which ->
+                when (which) {
+                    0 -> onItemLongClicked(item, "delete")
+                    1 -> onItemLongClicked(item, "modify")
+                }
+            }
+            .show()
+    }
 
     class WardrobeViewHolder(val binding: ItemWardrobeBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: ClothingItem) {
@@ -56,6 +64,13 @@ class WardrobeAdapter(
                     .load(item.imageUrl)
                     .apply(RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL))
                     .into(binding.imageView)
+            }
+
+            // Click listener for toggling visibility
+            binding.cardView.setOnClickListener {
+                val isImageVisible = binding.imageView.visibility == View.VISIBLE
+                binding.imageView.visibility = if (isImageVisible) View.GONE else View.VISIBLE
+                binding.textLayout.visibility = if (isImageVisible) View.VISIBLE else View.GONE
             }
         }
     }

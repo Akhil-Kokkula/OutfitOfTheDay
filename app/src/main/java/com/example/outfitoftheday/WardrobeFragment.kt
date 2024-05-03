@@ -45,8 +45,15 @@ class WardrobeFragment : Fragment() {
     }
 
     private fun setupAdapter() {
-        adapter = WardrobeAdapter(allItems, this::showDeleteConfirmationDialog)
+        adapter = WardrobeAdapter(allItems, this::handleItemAction)
         recyclerView.adapter = adapter
+    }
+
+    private fun handleItemAction(item: ClothingItem, action: String) {
+        when (action) {
+            "delete" -> showDeleteConfirmationDialog(item)
+            "modify" -> navigateToAddOutfitFragment(item)
+        }
     }
 
     private fun showDeleteConfirmationDialog(item: ClothingItem) {
@@ -75,6 +82,25 @@ class WardrobeFragment : Fragment() {
                 }
         }
     }
+    private fun navigateToAddOutfitFragment(item: ClothingItem) {
+        val fragment = AddOutfitFragment().apply {
+            arguments = Bundle().apply {
+                putString("item_id", item.id) // pass other details as needed
+                putString("label", item.label)
+                putString("color", item.color)
+                putString("brand", item.brand)
+                putString("category", item.category)
+                putString("imageBase64", item.imageBase64)
+                putString("imageUrl", item.imageUrl)
+            }
+        }
+        activity?.supportFragmentManager?.beginTransaction()?.apply {
+            replace(R.id.nav_host_fragment, fragment)
+            addToBackStack(null)
+            commit()
+        }
+    }
+
 
     private fun setupFirebaseDatabase() {
         val userId = auth.currentUser?.uid
