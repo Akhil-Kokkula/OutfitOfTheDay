@@ -5,14 +5,17 @@ import android.util.Base64
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.example.outfitoftheday.databinding.ItemWardrobeBinding
 
-class WardrobeAdapter(var items: List<ClothingItem>) :
-    RecyclerView.Adapter<WardrobeAdapter.WardrobeViewHolder>() {
+class WardrobeAdapter(
+    var items: MutableList<ClothingItem>,
+    private val onItemLongClicked: (ClothingItem) -> Unit
+) : RecyclerView.Adapter<WardrobeAdapter.WardrobeViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WardrobeViewHolder {
         val binding = ItemWardrobeBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -22,17 +25,28 @@ class WardrobeAdapter(var items: List<ClothingItem>) :
     override fun onBindViewHolder(holder: WardrobeViewHolder, position: Int) {
         val item = items[position]
         holder.bind(item)
+        // Long press listener for delete confirmation
+        holder.itemView.setOnLongClickListener {
+            onItemLongClicked(item)
+            true
+        }
+        // Click listener for toggling visibility
+        holder.binding.cardView.setOnClickListener {
+            val isImageVisible = holder.binding.imageView.visibility == View.VISIBLE
+            holder.binding.imageView.visibility = if (isImageVisible) View.GONE else View.VISIBLE
+            holder.binding.textLayout.visibility = if (isImageVisible) View.VISIBLE else View.GONE
+        }
     }
 
     override fun getItemCount(): Int = items.size
 
-    class WardrobeViewHolder(private val binding: ItemWardrobeBinding) : RecyclerView.ViewHolder(binding.root) {
-
+    class WardrobeViewHolder(val binding: ItemWardrobeBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: ClothingItem) {
             binding.textViewLabel.text = item.label ?: "No Label"
             binding.textViewColor.text = item.color ?: "No Color"
             binding.textViewBrand.text = item.brand ?: "No Brand"
 
+            // Load images from base64 or URL
             if (!item.imageBase64.isNullOrEmpty()) {
                 val bytes = Base64.decode(item.imageBase64, Base64.DEFAULT)
                 val bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
@@ -42,13 +56,6 @@ class WardrobeAdapter(var items: List<ClothingItem>) :
                     .load(item.imageUrl)
                     .apply(RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL))
                     .into(binding.imageView)
-            }
-
-            // Set up the click listener for the card view to toggle visibility between the image and text.
-            binding.cardView.setOnClickListener {
-                val isImageVisible = binding.imageView.visibility == View.VISIBLE
-                binding.imageView.visibility = if (isImageVisible) View.GONE else View.VISIBLE
-                binding.textLayout.visibility = if (isImageVisible) View.VISIBLE else View.GONE
             }
         }
     }

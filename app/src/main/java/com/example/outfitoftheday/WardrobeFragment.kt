@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
@@ -38,8 +39,41 @@ class WardrobeFragment : Fragment() {
         setupFirebaseDatabase()
         setupIconClickListeners()
         setupSearchView()
+        setupAdapter()
 
         return binding.root
+    }
+
+    private fun setupAdapter() {
+        adapter = WardrobeAdapter(allItems, this::showDeleteConfirmationDialog)
+        recyclerView.adapter = adapter
+    }
+
+    private fun showDeleteConfirmationDialog(item: ClothingItem) {
+        AlertDialog.Builder(requireContext())
+            .setTitle("Confirm Delete")
+            .setMessage("Are you sure you want to delete this item?")
+            .setPositiveButton("Delete") { dialog, which ->
+                deleteItemFromFirebase(item)
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    private fun deleteItemFromFirebase(item: ClothingItem) {
+        val userId = auth.currentUser?.uid
+        if (userId != null && item.id != null) {
+            FirebaseDatabase.getInstance().getReference("users/$userId/outfits/${item.id}")
+                .removeValue()
+                .addOnSuccessListener {
+                    allItems.remove(item)
+                    adapter.notifyDataSetChanged()
+                    Log.d("WardrobeFragment", "Item deleted successfully")
+                }
+                .addOnFailureListener {
+                    Log.e("WardrobeFragment", "Failed to delete item", it)
+                }
+        }
     }
 
     private fun setupFirebaseDatabase() {
@@ -118,13 +152,8 @@ class WardrobeFragment : Fragment() {
     }
 
     private fun updateUI(items: List<ClothingItem>) {
-        if (::adapter.isInitialized) {
-            adapter.items = items
-            adapter.notifyDataSetChanged()
-        } else {
-            adapter = WardrobeAdapter(items)
-            recyclerView.adapter = adapter
-        }
+        adapter.items = items.toMutableList()
+        adapter.notifyDataSetChanged()
     }
 
     override fun onDestroyView() {
