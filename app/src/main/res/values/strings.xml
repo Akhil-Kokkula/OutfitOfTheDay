@@ -50,7 +50,7 @@
     <string name="locationPermFail">Location permission denied</string>
     <string name="weatherAdded">Weather Information Added!</string>
     <string name="needAccesstoGoogle">This app needs to access your Google account (via Contacts).</string>
-    <string name="clickAgainForCalendar">Click again to load calendar!</string>
+    <string name="clickAgainForCalendar">Confirm</string>
     <string name="calendarAdded">Calendar Added!</string>
     <string name="pieChartCategory_casual">Casual</string>
     <string name="pieChartCategory_formal">Formal</string>
