@@ -1,6 +1,7 @@
 package com.example.outfitoftheday
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Color
@@ -124,10 +125,6 @@ class HomeFragment : Fragment() {
         })
     }
 
-
-
-
-
     private fun displayUserGreeting() {
         val currUser = FirebaseAuth.getInstance().currentUser
         welcomeText.text = getString(R.string.pieChartCategory_welcomeWord) + ", ${currUser?.email?.split('@')?.first()}!"
@@ -139,19 +136,21 @@ class HomeFragment : Fragment() {
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(requireActivity(), arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), LOCATION_PERMISSION_REQUEST_CODE)
         } else {
-            locationListener = LocationListener { location ->
-                latitude = location.latitude
-                longitude = location.longitude
-                fetchWeatherData(latitude, longitude)
-            }
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10f, locationListener)
+            requestLocationUpdates()
         }
+    }
+
+    @SuppressLint("MissingPermission") // Permission is checked before calling this method
+    private fun requestLocationUpdates() {
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 10f, locationListener)
     }
 
     private var locationListener = LocationListener { location ->
         latitude = location.latitude
         longitude = location.longitude
-        fetchWeatherData(latitude, longitude)
+        if (isAdded) {
+            fetchWeatherData(latitude, longitude)
+        }
     }
 
     private fun fetchWeatherData(latitude: Double, longitude: Double) {
@@ -162,35 +161,33 @@ class HomeFragment : Fragment() {
 
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
-                e.printStackTrace()
+                Log.e("WeatherData", "Failed to fetch weather data", e)
             }
 
             override fun onResponse(call: Call, response: Response) {
                 response.use {
-                    if (!response.isSuccessful) throw IOException("Unexpected code $response")
+                    if (!response.isSuccessful) {
+                        Log.e("WeatherData", "Unexpected response code $response")
+                        return
+                    }
 
                     val responseBody = response.body?.string()
                     responseBody?.let {
-                        // Parse the JSON response
                         val jsonResponse = JSONObject(it)
                         val dataObject = jsonResponse.optJSONObject("data")
                         dataObject?.let {
                             val valuesObject = dataObject.optJSONObject("values")
-
-                            //Now, get our desired values.
                             val weatherCode = valuesObject.optInt("weatherCode", -1)
-                            val time = dataObject.optString("time", "")
-                            val isDaytime = determineDayOrNight(time)
+                            val temperatureC = valuesObject.optDouble("temperature", Double.NaN)
+                            val isDaytime = determineDayOrNight(dataObject.optString("time", ""))
 
-                            // Update weather icon based on weather code and daytime/nighttime
-                            updateWeatherIcon(weatherCode, isDaytime)
-
-                            // Handle UI update
+                            if (isAdded) {
+                                updateWeatherIcon(weatherCode, isDaytime, temperatureC)
+                            }
                         }
                     }
                 }
             }
-
         })
     }
 
@@ -203,7 +200,8 @@ class HomeFragment : Fragment() {
         return calendar.get(Calendar.HOUR_OF_DAY) in 7..19  // Consider daytime from 7 AM to 7 PM
     }
 
-    private fun updateWeatherIcon(weatherCode: Int, isDaytime: Boolean) {
+    @SuppressLint("SetTextI18n")
+    private fun updateWeatherIcon(weatherCode: Int, isDaytime: Boolean, temperatureC: Double) {
         val iconRes = when (weatherCode) {
             1000 -> if (isDaytime) R.drawable.clear_day else R.drawable.clear_night
             1100 -> if (isDaytime) R.drawable.mostly_clear_day else R.drawable.mostly_clear_night
@@ -221,8 +219,38 @@ class HomeFragment : Fragment() {
             else -> R.drawable.unknown_weather
         }
 
+        val description = when (weatherCode) {
+            1000 -> getString(R.string.weather_clear)
+            1100 -> getString(R.string.weather_mostly_clear)
+            1101 -> getString(R.string.weather_partly_cloudy)
+            1102 -> getString(R.string.weather_mostly_cloudy)
+            1001 -> getString(R.string.weather_cloudy)
+            2000, 2100 -> getString(R.string.weather_fog)
+            4000 -> getString(R.string.weather_drizzle)
+            4001, 4201 -> getString(R.string.weather_heavy_rain)
+            4200 -> getString(R.string.weather_rain)
+            5000, 5100, 5101, 5001 -> getString(R.string.weather_snow)
+            6000, 6200, 6201, 6001 -> getString(R.string.weather_freezing_rain)
+            7000, 7101, 7102 -> getString(R.string.weather_ice_pellets)
+            8000 -> getString(R.string.weather_thunderstorm)
+            else -> getString(R.string.weather_unknown)
+        }
+
+        // Convert Celsius to Fahrenheit
+        val temperatureF = temperatureC * 9/5 + 32
+
         activity?.runOnUiThread {
             weatherIcon.setImageResource(iconRes)
+            // Update the weather information text
+            val weatherInfoTextView: TextView = requireView().findViewById(R.id.weatherInfoTextView)
+            weatherInfoTextView.text = "$description, ${String.format("%.1f", temperatureF)}°F"
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        if (this::locationManager.isInitialized) {
+            locationManager.removeUpdates(locationListener)
         }
     }
 }

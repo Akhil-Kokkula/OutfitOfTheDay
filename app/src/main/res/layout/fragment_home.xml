@@ -47,7 +47,19 @@
                 app:layout_constraintTop_toBottomOf="@id/outfitOfTheDayContainer"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                android:src="@drawable/ic_profile_placeholder" />
+                android:src="@drawable/unknown_weather" />
+
+            <TextView
+                android:id="@+id/weatherInfoTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/loading_weather_information"
+                android:textSize="16sp"
+                android:textColor="#FFFFFF"
+                android:layout_marginTop="8dp"
+                app:layout_constraintTop_toBottomOf="@id/weatherImageView"
+                app:layout_constraintStart_toStartOf="@id/weatherImageView"
+                app:layout_constraintEnd_toEndOf="@id/weatherImageView" />
 
             <TextView
                 android:id="@+id/welcomeTextView"
@@ -58,7 +70,7 @@
                 android:textSize="24sp"
                 android:textColor="#DDDDDD"
                 android:fontFamily="sans-serif-medium"
-                app:layout_constraintTop_toBottomOf="@id/weatherImageView"
+                app:layout_constraintTop_toBottomOf="@id/weatherInfoTextView"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
 
@@ -66,13 +78,13 @@
                 android:id="@+id/commonOccasionsLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/home_statsText"
-                android:textSize="18sp"
+                android:layout_marginTop="52dp"
+                android:text="@string/your_clothing_wardrobe_distribution"
                 android:textColor="#FFFFFF"
-                app:layout_constraintTop_toBottomOf="@id/welcomeTextView"
-                app:layout_constraintStart_toStartOf="parent"
+                android:textSize="18sp"
                 app:layout_constraintEnd_toEndOf="parent"
-                android:layout_marginTop="12dp"/>
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/welcomeTextView" />
 
             <com.github.mikephil.charting.charts.PieChart
                 android:id="@+id/pieChart"
