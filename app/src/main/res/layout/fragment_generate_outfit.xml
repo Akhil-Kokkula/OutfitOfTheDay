@@ -91,6 +91,44 @@
                 android:textColor="#FFFFFF" />
         </com.google.android.material.textfield.TextInputLayout>
 
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/calendarButtonContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:layout_constraintTop_toBottomOf="@+id/tilDuration"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <TextView
+                android:id="@+id/useCalendarPrompt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:text="@string/use_your_calendar"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <Button
+                android:id="@+id/loadCalendarButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="72dp"
+                android:padding="10dp"
+                android:text="@string/yes"
+                android:textColor="#FFFFFF"
+                app:backgroundTint="#000000"
+                app:layout_constraintBottom_toBottomOf="@+id/useCalendarPrompt"
+                app:layout_constraintStart_toEndOf="@+id/useCalendarPrompt"
+                app:layout_constraintTop_toTopOf="@+id/useCalendarPrompt"
+                app:layout_constraintVertical_bias="0.538" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvOutfitGallery"
             android:layout_width="399dp"
@@ -99,7 +137,7 @@
             android:padding="10dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tilDuration" />
+            app:layout_constraintTop_toBottomOf="@+id/calendarButtonContainer" />
 
         <com.google.android.material.progressindicator.CircularProgressIndicator
             android:id="@+id/loadingIndicator"
@@ -108,25 +146,10 @@
             android:indeterminate="true"
             app:indicatorColor="@color/white"
             android:layout_marginTop="100dp"
-            app:layout_constraintTop_toBottomOf="@+id/tilDuration"
+            app:layout_constraintTop_toBottomOf="@+id/calendarButtonContainer"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             />
-
-
-
-        <Button
-            android:id="@+id/loadCalendarButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:padding="10dp"
-            android:text="@string/genOutfit_button1"
-            android:textColor="#FFFFFF"
-            app:backgroundTint="#FDB74F"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/weatherTextView" />
 
         <Button
             android:id="@+id/generateOutfitButton"

@@ -62,6 +62,9 @@
     <string name="signUp_accountCreationFail">Account creation failed. Please try again.</string>
     <string name="generateOutfitImportantEvent">Most Important Event for Today</string>
     <string name="generateOutfitEventDuration">Duration of Time Outside (hours)</string>
+    <string name="use_your_calendar">Use your calendar?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
     <string-array name="clothing_categories">
         <item>All</item>
         <item>Hats</item>
