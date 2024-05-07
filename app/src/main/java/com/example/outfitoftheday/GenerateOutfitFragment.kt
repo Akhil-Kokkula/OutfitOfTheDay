@@ -54,7 +54,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import okhttp3.Call
 import okhttp3.Callback
@@ -95,7 +94,7 @@ class GenerateOutfitFragment : Fragment() {
 
     //Weather Variables
     private val client = OkHttpClient()
-    private val locationAPIKEY = "1Ne2e9X6qm2oSfbZ0lxvutPUvD6kyMGf"
+    private val locationAPIKEY = BuildConfig.WEATHER_API_KEY
     private var weatherTemp = 0.0
     private var weatherPrecipitationProbability = 0.0
     private var weatherHumidity = 0.0
@@ -474,7 +473,7 @@ class GenerateOutfitFragment : Fragment() {
     }
 
     private fun sendAndReceiveMessageFromClaude(userMsg: String, callback: (String) -> Unit){
-        val ANTHROPIC_API_KEY = ""
+        val ANTHROPIC_API_KEY = BuildConfig.ANTHROPIC_API_KEY
         val url = "https://api.anthropic.com/v1/messages"
         val headers = mapOf(
             "x-api-key" to ANTHROPIC_API_KEY,

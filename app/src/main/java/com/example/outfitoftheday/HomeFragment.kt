@@ -39,6 +39,7 @@ import java.util.Calendar
 import java.util.Locale
 import java.util.TimeZone
 
+
 class HomeFragment : Fragment() {
     private lateinit var pieChart: PieChart
     private lateinit var welcomeText: TextView
@@ -154,7 +155,7 @@ class HomeFragment : Fragment() {
     }
 
     private fun fetchWeatherData(latitude: Double, longitude: Double) {
-        val apiKey = "qIX6tr50cDZVt7xVQoJyNSZu17UzcEMZ"
+        val apiKey = BuildConfig.WEATHER_API_KEY
         val client = OkHttpClient()
         val url = "https://api.tomorrow.io/v4/weather/realtime?location=${latitude},${longitude}&apikey=$apiKey"
         val request = Request.Builder().url(url).build()

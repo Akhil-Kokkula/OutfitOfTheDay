@@ -1,3 +1,4 @@
+import java.util.Properties
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -17,6 +18,14 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        val localProperties = Properties()
+        localProperties.load(rootProject.file("local.properties").inputStream())
+        val weatherApiKey = localProperties.getProperty("weatherApiKey")
+        buildConfigField("String", "WEATHER_API_KEY", "\"$weatherApiKey\"")
+        val anthropicApiKey = localProperties.getProperty("anthropicApiKey")
+        buildConfigField("String", "ANTHROPIC_API_KEY", "\"$anthropicApiKey\"")
+        val visionApiKey = localProperties.getProperty("visionApiKey")
+        buildConfigField("String", "VISION_API_KEY", "\"$visionApiKey\"")
     }
 
     buildTypes {
@@ -38,6 +47,7 @@ android {
     buildFeatures {
         viewBinding = true
         dataBinding = true
+        buildConfig = true
     }
 }
 
