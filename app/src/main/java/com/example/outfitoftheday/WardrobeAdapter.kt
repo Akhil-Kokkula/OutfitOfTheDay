@@ -36,7 +36,7 @@ class WardrobeAdapter(
     override fun getItemCount(): Int = items.size
 
     private fun showOptionsDialog(context: android.content.Context, item: ClothingItem) {
-        val options = arrayOf<CharSequence>("Delete Clothing Item", "Clothing Item")
+        val options = arrayOf<CharSequence>("Delete Clothing Item", "Modify Clothing Item")
         AlertDialog.Builder(context)
             .setTitle("What would you like to do?")
             .setItems(options) { dialog, which ->
