@@ -83,12 +83,12 @@
     <string name="weather_thunderstorm">雷雨</string>
     <string name="weather_unknown">天候不明</string>
     <string-array name="clothing_categories">
-        <item>All</item>
-        <item>Hats</item>
-        <item>Tops</item>
-        <item>Bottoms</item>
-        <item>Footwear</item>
-        <item>Miscellaneous</item>
+        <item>全て</item>
+        <item>帽子</item>
+        <item>トップス</item>
+        <item>ボトムス</item>
+        <item>履物</item>
+        <item>その他</item>
     </string-array>
 
 </resources>

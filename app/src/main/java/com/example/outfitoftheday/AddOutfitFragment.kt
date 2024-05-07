@@ -130,14 +130,14 @@ class AddOutfitFragment : Fragment() {
                 }
             } else {
                 // Set up the fragment in add mode
-                buttonSubmit.text = "Add to Wardrobe"
+                buttonSubmit.text = getString(R.string.addClothes_buttonText)
                 buttonSubmit.setOnClickListener {
                     submitOutfitData()
                 }
             }
         } ?: run {
             // Default to add mode if no arguments are passed
-            buttonSubmit.text = "Add to Wardrobe"
+            buttonSubmit.text = getString(R.string.addClothes_buttonText)
             buttonSubmit.setOnClickListener {
                 submitOutfitData()
             }

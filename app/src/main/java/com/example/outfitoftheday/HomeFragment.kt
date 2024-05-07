@@ -4,6 +4,7 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
+import android.content.res.Resources
 import android.graphics.Color
 import android.location.LocationListener
 import android.location.LocationManager
@@ -95,7 +96,8 @@ class HomeFragment : Fragment() {
 
                 val entries = ArrayList<PieEntry>()
                 for (entry in categoryMap.entries) {
-                    entries.add(PieEntry(entry.value, entry.key))
+                    // Get localized category name
+                    entries.add(PieEntry(entry.value, makeLocale(entry.key)))
                 }
 
                 if (entries.isNotEmpty()) {
@@ -124,6 +126,20 @@ class HomeFragment : Fragment() {
                 Log.e("loadPieChartData", "Error loading data", error.toException())
             }
         })
+    }
+
+    // Function to get localized string based on current locale
+
+    private fun  makeLocale(title: String) : String {
+        return when (title) {
+            "All" -> resources.getStringArray(R.array.clothing_categories)[0]
+            "Hats" -> resources.getStringArray(R.array.clothing_categories)[1]
+            "Tops" -> resources.getStringArray(R.array.clothing_categories)[2]
+            "Bottoms" -> resources.getStringArray(R.array.clothing_categories)[3]
+            "Footwear" -> resources.getStringArray(R.array.clothing_categories)[4]
+            "Miscellaneous" -> resources.getStringArray(R.array.clothing_categories)[5]
+            else -> title // Return the original title if it's not found
+        }
     }
 
     private fun displayUserGreeting() {
