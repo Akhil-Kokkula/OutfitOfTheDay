@@ -63,6 +63,25 @@
     <string name="signUp_accountCreationFail">アカウントの作成に失敗しました。もう一度試してください。</string>
     <string name="generateOutfitImportantEvent">今日の最も重要なイベント</string>
     <string name="generateOutfitEventDuration">屋外滞在時間（時間）</string>
+    <string name="use_your_calendar">カレンダーを使用しますか?</string>
+    <string name="yes">はい</string>
+    <string name="no">いいえ</string>
+    <string name="loading_weather_information">気象情報を読み込んでいます...</string>
+    <string name="your_clothing_wardrobe_distribution">あなたの衣類のワードローブの分布:</string>
+    <string name="weather_clear">晴天</string>
+    <string name="weather_mostly_clear">ほぼ晴れた空</string>
+    <string name="weather_partly_cloudy">曇り空</string>
+    <string name="weather_mostly_cloudy">ほぼ曇り空</string>
+    <string name="weather_cloudy">曇り</string>
+    <string name="weather_fog">霧</string>
+    <string name="weather_drizzle">霧雨</string>
+    <string name="weather_heavy_rain">大雨</string>
+    <string name="weather_rain">雨</string>
+    <string name="weather_snow">雪</string>
+    <string name="weather_freezing_rain">凍てつく雨</string>
+    <string name="weather_ice_pellets">氷の粒</string>
+    <string name="weather_thunderstorm">雷雨</string>
+    <string name="weather_unknown">天候不明</string>
     <string-array name="clothing_categories">
         <item>All</item>
         <item>Hats</item>
