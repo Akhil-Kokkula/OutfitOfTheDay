@@ -304,7 +304,8 @@ class AddOutfitFragment : Fragment() {
                             editTextLabel.setText(descriptions ?: "No label detected")
                             editTextColor.setText(closestColorName) // Using the named color
 
-                            editTextBrand.setText(listOfNotNull(brandNames, textDescriptions).joinToString(" ").ifBlank { "No brand or text detected" })
+                            val brandText = if (brandNames == textDescriptions) brandNames else listOfNotNull(brandNames, textDescriptions).joinToString(" ").ifBlank { "No brand or text detected" }
+                            editTextBrand.setText(brandText)
                         }
                     }
                 } else {
